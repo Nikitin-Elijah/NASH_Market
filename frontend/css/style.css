@@ -1,0 +1,566 @@
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --accent: #2563eb;
+  --muted: #6b7280;
+  --danger: #ef4444;
+  --radius: 12px;
+}
+
+/* --- Базовые стили --- */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg), #eef2ff);
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Верхняя панель --- */
+.topbar {
+  background: var(--card);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.auth-block {
+  display: flex;
+  align-items: center;
+}
+
+.mini-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: #f3f4f6;
+  padding: 6px 10px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.mini-profile:hover {
+  background: #e5e7eb;
+}
+
+.mini-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* --- Контейнеры и карточки --- */
+.container {
+  width: 100%;
+  max-width: 1200px; /* Увеличено */
+  margin: 40px auto;
+  flex: 1;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(16,24,40,0.08);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* --- Заголовки и кнопки --- */
+h1 {
+  margin: 0 0 18px;
+  font-size: 26px;
+}
+
+.primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.secondary {
+  background: #f3f4f6;
+  border: 1px solid #e6e9ef;
+  padding: 8px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.secondary:hover {
+  background: #e5e7eb;
+}
+
+/* --- Карточки товаров на главной --- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* карточки шире */
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.product-card {
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.product-card img {
+  width: 100%;
+  height: 220px; /* увеличил высоту фото */
+  object-fit: cover;
+}
+
+.product-card .info {
+  padding: 16px;
+  text-align: left;
+}
+
+.product-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #111827;
+}
+
+.product-card p {
+  font-size: 15px;
+  color: #555;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.product-card .price {
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+/* --- Профиль --- */
+.user-card {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.avatar-block {
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e6e9ef;
+  margin-bottom: 12px;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+/* --- Логин --- */
+.login-page,
+.login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #eef2ff, #dbeafe);
+  min-height: 100vh;
+}
+
+```css
+/* Контейнер формы */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f0f4ff;
+}
+
+.login-card {
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 400px;
+  font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.login-header {
+  text-align: center; /* 👈 все элементы внутри будут по центру */
+}
+
+.login-header h1 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #1d4ed8;
+}
+
+.login-header .subtitle {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Поля ввода */
+.login-card label.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.login-card label span {
+  font-size: 13px;
+  margin-bottom: 2px;
+  color: #111827;
+}
+
+/* Унифицированный стиль для email и password */
+.login-card input[type="email"],
+.login-card input[type="password"],
+.login-card input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px !important;       /* 👈 одинаковый размер */
+  font-family: inherit !important;  /* 👈 одинаковый шрифт */
+  line-height: 1.4;
+  box-sizing: border-box;
+  outline: none;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Стилизация плейсхолдера */
+.login-card input::placeholder {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* Чекбокс и подпись в одну строку */
+.login-card label.remember {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.login-card label.remember input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Кнопка */
+.login-card .primary {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.login-card .primary:hover {
+  background: #1d4ed8;
+}
+```
+
+
+
+/* --- Анимация --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Профиль пользователя --- */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--card);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header h2 {
+  margin: 0 auto;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.back-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.user-card {
+  text-align: center;
+  padding: 40px 32px;
+}
+
+.avatar-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e6e9ef;
+  margin-bottom: 12px;
+}
+
+#username {
+  margin: 12px 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+#email {
+  margin: 0 0 20px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.actions, .avatar-block, .extra-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.secondary {
+  background: #f9fafb;
+  border: 1px solid #e6e9ef;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+  min-width: 160px;
+}
+
+.secondary:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.actions-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Страница создания товара --- */
+.form-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 600px;
+  margin: 40px auto;
+  box-shadow: 0 8px 24px rgba(16,24,40,0.08);
+  animation: fadeIn 0.3s ease;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-header h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: #111827;
+}
+
+.form-header .subtitle {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.styled-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.styled-form label.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  gap: 6px;
+}
+
+.styled-form input,
+.styled-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.styled-form input:focus,
+.styled-form textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+.preview {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.preview img {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: var(--radius);
+  border: 1px solid #e5e7eb;
+  object-fit: cover;
+}
+
+.primary.wide {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.status {
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* --- Предпросмотр созданного товара --- */
+.product-preview-card {
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.product-preview-card img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+.product-preview-card h2 {
+  font-size: 20px;
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.product-preview-card p {
+  font-size: 15px;
+  color: #444;
+  margin: 0 0 10px;
+}
+
+.product-preview-card .price {
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.actions-block {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.danger-btn {
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  background: #fff;
+}
+
+.danger-btn:hover {
+  background: #fee2e2;
+}

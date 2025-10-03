@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>Добавить товар</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo" onclick="window.location.href='index.html'">← Главная</div>
+  </header>
+
+  <main class="container">
+    <div class="form-card">
+      <div class="form-header">
+        <h1>Добавление товара</h1>
+        <p class="subtitle">Заполните поля ниже, чтобы выставить новый товар</p>
+      </div>
+
+      <form id="productForm" class="styled-form">
+        <label class="field">
+          <span>Название</span>
+          <input type="text" id="title" placeholder="Например: Кресло из дуба" required />
+        </label>
+
+        <label class="field">
+          <span>Описание</span>
+          <textarea id="description" rows="3" placeholder="Кратко опишите товар" required></textarea>
+        </label>
+
+        <label class="field">
+          <span>Цена (₽)</span>
+          <input type="number" id="price" step="0.01" placeholder="Укажите цену" required />
+        </label>
+
+        <label class="field">
+          <span>Фото</span>
+          <input type="file" id="photo" accept="image/*" />
+          <div class="preview">
+            <img id="previewImg" src="images/default-product.jpg" alt="Превью фото" />
+          </div>
+        </label>
+
+        <button type="submit" class="primary wide">Создать товар</button>
+      </form>
+
+      <p id="status" class="status"></p>
+
+      <!-- 👉 Блок предпросмотра готового товара -->
+      <div id="productCard" class="product-preview-card" hidden>
+        <img id="prodPhoto" src="images/default-product.jpg" alt="Фото товара" />
+        <h2 id="prodTitle"></h2>
+        <p id="prodDesc"></p>
+        <div class="price" id="prodPrice"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/create-product.js"></script>
+</body>
+</html>
+

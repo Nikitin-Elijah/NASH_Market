@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Вход — Авторизация</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="login-body">
+  <main class="login-container">
+    <form id="loginForm" class="login-card" autocomplete="on">
+      <div class="login-header">
+        <h1>Вход в аккаунт</h1>
+        <p class="subtitle">Добро пожаловать! Введите свои данные для входа.</p>
+      </div>
+
+      <label class="field">
+        <span>Электронная почта</span>
+        <input id="username" name="username" type="email" placeholder="you@example.com" required />
+      </label>
+
+      <label class="field">
+        <span>Пароль</span>
+        <input id="password" name="password" type="password" placeholder="Введите пароль" required />
+      </label>
+
+      <label class="inline remember">
+        <input id="remember" type="checkbox" />
+        <span>Запомнить меня</span>
+      </label>
+
+      <button id="submitBtn" class="primary" type="submit">Войти</button>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
