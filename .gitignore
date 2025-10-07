@@ -1,6 +1,16 @@
+# virtual environment
 venv/
 .idea/
 *.pyc
 .env
 .venv
 .vscode
+
+# Celery beat files
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+celerybeat-schedule
+
+# Celery
+celerybeat.pid

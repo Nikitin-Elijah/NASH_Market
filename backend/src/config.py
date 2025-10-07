@@ -39,3 +39,13 @@ s3_storage: S3Client = S3Client(**STORAGE_INFO)
 # _______________AUTH CONFIGURATION_______________
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
+
+# _______________VERIFICATION CONFIGURATION_______________
+VERIFICATION_SECRET_KEY = os.getenv('VERIFICATION_SECRET_KEY')
+
+# _______________REDIS CONFIGURATION_______________
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+REDIS_DB = os.getenv('REDIS_DB', 'default_db')
+
+REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
