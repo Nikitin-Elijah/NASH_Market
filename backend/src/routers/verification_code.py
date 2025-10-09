@@ -64,12 +64,14 @@ async def verify_code(verify_code: VerifyCodeSchema):
     if normalized_db_code != normalized_input_code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid verification code')
 
-    if not db_user.tg_user_id and not db_user.tg_username:
+    if not db_verification_code.tg_user_id and not db_verification_code.tg_username:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='The server did not detect tg id')
 
     db_verification_code.activate = True
     await db_verification_code.save()
 
+    db_user.tg_user_id = db_verification_code.tg_user_id
+    db_user.tg_username = db_verification_code.tg_username
     db_user.is_active = True
     db_user.verified_at = datetime.utcnow()
     await db_user.save()

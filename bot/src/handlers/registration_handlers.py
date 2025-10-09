@@ -34,10 +34,9 @@ async def start(message: Message):
                     )
 
                 else:
-                    db_user = await UserModel.get(db_verification_code.user_id)
-                    db_user.tg_user_id = message.from_user.id
-                    db_user.tg_username = message.from_user.username
-                    await db_user.save()
+                    db_verification_code.tg_user_id = message.from_user.id
+                    db_verification_code.tg_username = message.from_user.username
+                    await db_verification_code.save()
                     await message.answer(
                         f"Добро пожаловать в телеграмм бот нашенского рынка!\n"
                         f"Код для подтверждения регистрации: {code}"

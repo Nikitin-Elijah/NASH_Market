@@ -28,8 +28,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token = create_access_token(data={"sub": user.tg_user_id, "username": user.username, "id": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.tg_user_id, "username": user.username, "id": user.id})
+    access_token = create_access_token(data={"sub": str(user.tg_user_id), "username": user.username, "id": user.id})
+    refresh_token = create_refresh_token(data={"sub": str(user.tg_user_id), "username": user.username, "id": user.id})
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 
@@ -65,7 +65,7 @@ async def refresh_token(refresh_token: str):
 
 @router.get('/', response_model=List[UserSchema])
 async def get_all_users(current_user: UserModel = Depends(get_current_user)):
-    return await UserModel.all()
+    return await UserModel.filter(is_active=True)
 
 
 @router.get('/me', response_model=UserSchema)
