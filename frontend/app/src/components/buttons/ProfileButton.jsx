@@ -16,7 +16,7 @@ const ProfileButton = () => {
     (
     <button
       onClick={handleLogin} 
-      className="btn btn-primary m-3"
+      className="btn btn-primary m-2 gap-1"
     >
       Войти
     </button>
