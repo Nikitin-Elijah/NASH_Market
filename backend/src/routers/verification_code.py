@@ -64,7 +64,7 @@ async def verify_code(verify_code: VerifyCodeSchema):
     if normalized_db_code != normalized_input_code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid verification code')
 
-    if not db_verification_code.tg_user_id and not db_verification_code.tg_username:
+    if not db_verification_code.tg_user_id:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='The server did not detect tg id')
 
     db_verification_code.activate = True
