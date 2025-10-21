@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton";
-import { AuthContext } from '../ApiMethods';
+import { AuthContext } from '../methods/ApiMethods.jsx';
+import Header from "./Header.jsx";
 
 const EditProductPage = () => {
     const { edit } = useContext(AuthContext);
@@ -12,26 +12,25 @@ const EditProductPage = () => {
     const [price, setPrice] = useState('');
     const [image, setImage] = useState(null);
     const productId = window.location.pathname.split("/").pop();
-
     const [product, setProduct] = useState({});
 
-    const fetchProduct = async () => {
-        try {
-            const res = await get(productId);
-            setProduct(res);
-            setName(res.name || '');
-            setDescription(res.description || '');
-            setPrice(res.price || '');
-            setImage(res.image_url || null);
-            return res;
-        } catch (err) {
-            alert('Ошибка получения данных товара');
-            return null;
-        }
-    };
-
     React.useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const res = await get(productId);
+                setProduct(res);
+                setName(res.name || '');
+                setDescription(res.description || '');
+                setPrice(res.price || '');
+                setImage(res.image_url || null);
+                return res;
+            } catch (err) {
+                alert('Ошибка получения данных товара');
+                return null;
+            }
+        };
         fetchProduct();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSubmit = async (e) => {
@@ -46,7 +45,7 @@ const EditProductPage = () => {
 
     return (
         <div>
-            <HomeButton/>
+            <Header />
             <div className="d-flex flex-column align-items-center m-5">
                 <h1 className="text fs-1">Редактирование товара</h1>
                 <p className="text fs-3">Заполните поля ниже, чтобы изменить товар</p>

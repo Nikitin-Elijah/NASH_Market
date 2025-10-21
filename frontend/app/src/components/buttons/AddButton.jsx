@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../ApiMethods';
+import { AuthContext } from '../methods/ApiMethods.jsx';
 
 
 const AddButton = () => {
@@ -16,7 +16,7 @@ const AddButton = () => {
   return (
     <button
       onClick={handleAddProduct}
-      className="btn btn-outline-primary d-flex align-items-center gap-1 m-2 rounded-pill"
+      className="btn btn-outline-primary rounded-pill"
     >
       Добавить товар
     </button>

@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton.jsx";
-import { AuthContext } from '../ApiMethods.jsx';
+import { AuthContext } from '../methods/ApiMethods.jsx';
 
 
 
@@ -23,7 +22,20 @@ function LoginPage() {
 
     return (
         <>
-        <HomeButton className="position-absolute top-0 start-0 m-3" />
+        <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-3 py-2" 
+        style={{ height: "8vh" }}>
+        <div className="container-fluid d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center gap-3">
+            <h1
+                onClick={() => navigate("/")}
+                className="h5 m-0 text-primary fw-semibold"
+                style={{ cursor: "pointer" }}
+            >
+                NASH Market
+            </h1>
+            </div>
+        </div>
+        </nav>
         <div className="text-center m-4">
             <h1 className="fs-1">Вход в аккаунт</h1>
         </div>

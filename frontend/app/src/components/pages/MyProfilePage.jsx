@@ -1,30 +1,17 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton";
-import { AuthContext } from '../ApiMethods';
-// import avatar from '../../../../public/blue-avatar.png';
+import Header from "./Header"; 
+import { AuthContext } from '../methods/ApiMethods';
 
 const MyProfilePage = () => {
-    const { getUser } = useContext(AuthContext);
-    const { logout } = useContext(AuthContext);
-    const { uploadPhoto } = useContext(AuthContext);
+    const { user, logout, uploadPhoto, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [photoUrl, setPhotoUrl] = useState('');
-    const [email, setEmail] = useState('');
 
-    const fetchUser = async () => {
-        try {
-            const res = await getUser();
-            setUsername(res.username);
-            setPhotoUrl(res.photo_url || '/blue-avatar.png');
-            setEmail(res.email);
-        } catch (err) {
-            alert('Ошибка получения данных пользователя');
-        }
-    };
     const handleLogout = () => {
         logout();
+        setUser(null);
         navigate('/');
     }
     const handleAdd = () => {
@@ -32,10 +19,16 @@ const MyProfilePage = () => {
     }
 
     React.useEffect(() => {
-        fetchUser();
-    }, []);
+    if (!user) {
+        navigate('/login');
+        setUser(null);
+        return;
+    }
+    setUsername(user.username);
+    setPhotoUrl(user.photo_url || '/blue-avatar.png');
+}, [user, navigate]);
 
-    const [selectedFile, setSelectedFile] = useState(null);
+
 
     const handlePhotoChange = (event) => {
         const file = event.target.files[0];
@@ -45,9 +38,8 @@ const MyProfilePage = () => {
                 uploadPhoto(file).then((url) => {
                     setPhotoUrl(url);
                 }).catch(() => {
-                    alert('Ошибка загрузки фото');
+                    console.error('Ошибка загрузки фото');
                 });
-                
             };
             reader.readAsDataURL(file);
         }
@@ -55,7 +47,7 @@ const MyProfilePage = () => {
 
     return (
         <div>
-            <HomeButton/>
+            <Header />
             <div className="d-flex flex-column align-items-center m-5">
                 <h1 className="text fs-1">Профиль</h1>
                 <img
@@ -81,7 +73,6 @@ const MyProfilePage = () => {
                     Изменить Фото
                 </label>
                 <span className="text fs-3 mt-5">{username}</span>
-                <span className="text fs-5">{email}</span>
                 <button className="btn btn-primary mt-3" onClick={handleAdd}>Добавить товар</button>
                 <button className="btn btn-danger mt-3" onClick={handleLogout}>Выйти</button>
             </div>

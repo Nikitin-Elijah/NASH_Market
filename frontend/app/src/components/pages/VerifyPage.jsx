@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import HomeButton from "../buttons/HomeButton.jsx";
-import { AuthContext } from "../ApiMethods.jsx";
+import { AuthContext } from "../methods/ApiMethods.jsx";
 
 function VerifyPage() {
     const { verify } = useContext(AuthContext);

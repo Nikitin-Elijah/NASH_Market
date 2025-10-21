@@ -66,45 +66,47 @@ export default function ProductList() {
   );
 
   return (
-    <div className="row row-cols-1 row-cols-md-4 g-4 m-2">
-      {products.map((product) => (
-        <div className="col" key={product.id}>
-          <div className="item h-90 position-relative"
+  <div className="row row-cols-2 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 g-3 m-2">
+    {products.map((product) => (
+      <div className="col" key={product.id}>
+        <div
+          className="item position-relative card"
           style={{
-            transition: 'transform 0.3s ease',
-            cursor: 'pointer'
+            transition: "transform 0.3s ease",
+            cursor: "pointer",
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div className="position-absolute top-0 end-0 m-2">
-              <button 
-                className="btn btn-light opacity-75 me-2"
-                onClick={() => handleEdit(product.id)}
-              >
-                <i className="bi bi-pencil"></i>
-              </button>
-              <button 
-                className="btn btn-light opacity-75"
-                onClick={() => handleDelete(product.id)}
-              >
-                <i className="bi bi-trash"></i>
-              </button>
-            </div>
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="img-fluid"
-              style={{ height: "200px", objectFit: "cover" }}
-            />
-            <div className="card-body d-flex flex-column align-items-start text-break">
-              <span className="card-title m-2 text-bold">{product.name}</span>
-              {/* <span className="card-title m-2 text-bold text-wrap">{product.description}</span> */}
-              <p className="card-text m-2">{product.price} ₽</p>
-            </div>
+          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        >
+          <div className="position-absolute top-0 end-0 m-2">
+            <button
+              className="btn btn-light opacity-75 me-2"
+              onClick={() => handleEdit(product.id)}
+            >
+              <i className="bi bi-pencil"></i>
+            </button>
+            <button
+              className="btn btn-light opacity-75"
+              onClick={() => handleDelete(product.id)}
+            >
+              <i className="bi bi-trash"></i>
+            </button>
+          </div>
+
+         <img
+            src={product.image_url}
+            alt={product.name}
+            className="card-img-top"
+            style={{ height: "150px", objectFit: "cover" }}
+          />
+
+          <div className="d-flex flex-column align-items-start text-break p-2">
+            <span className="text fs-6">{product.name}</span>
+            <p className="text fs-6">{product.price} ₽</p>
           </div>
         </div>
-      ))}
-    </div>
-  );
+      </div>
+    ))}
+  </div>
+);
 }

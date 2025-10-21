@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "./buttons/HomeButton";
+import HomeButton from "../buttons/HomeButton";
 import { AuthContext } from './AuthContext';
 
 const EditProduct = () => {

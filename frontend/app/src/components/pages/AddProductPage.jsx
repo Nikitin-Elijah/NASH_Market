@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton";
-import { AuthContext } from '../ApiMethods';
+import Header from "./Header.jsx"; 
+import { AuthContext } from '../methods/ApiMethods.jsx';
 
 const AddProduct = () => {
     const { add } = useContext(AuthContext);
@@ -23,7 +23,7 @@ const AddProduct = () => {
 
     return (
         <div>
-            <HomeButton/>
+            <Header />
             <div className="d-flex flex-column align-items-center m-5">
                 <h1 className="text fs-1">Добавление товара</h1>
                 <p className="text fs-3">Заполните поля ниже, чтобы выставить новый товар</p>
