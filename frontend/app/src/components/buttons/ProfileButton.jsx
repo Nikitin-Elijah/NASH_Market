@@ -28,7 +28,7 @@ const ProfileButton = () => {
       onClick={handleProfile} 
       className="btn btn-outline-primary d-flex align-items-center gap-1 m-2 rounded-pill"
     >
-      <img src={user.photo_url} alt="" className='rounded' 
+      <img src={user.photo_url || '/blue-avatar.png'} alt="" className='rounded' 
         style={{
                 width: '30px',
                 height: '30px',

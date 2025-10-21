@@ -1,27 +1,14 @@
-import random
-import uuid
 import base64
-import hmac
 import hashlib
+import hmac
 import struct
 
-from src.config import STORAGE_URL
+from aiogram import Bot, Dispatcher
 
+from config import BOT_TOKEN
 
-def generate_avatar_filename(user_id: int, original_filename: str) -> str:
-    extension = original_filename.split('.')[-1]
-    filename = f"avatar_{user_id}_{uuid.uuid4().hex}.{extension}"
-    return filename
-
-
-def generate_product_image_filename(user_id: int, product_id: int, original_filename: str) -> str:
-    extension = original_filename.split('.')[-1]
-    filename = f"product_{product_id}_{user_id}_{uuid.uuid4().hex}.{extension}"
-    return filename
-
-
-def generate_storage_url(filename: str) -> str:
-    return f'{STORAGE_URL}/{filename}'
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
 
 
 def encode_record_id(record_id: int, secret_key: bytes) -> str:
@@ -55,14 +42,3 @@ def decode_record_id(hash_string: str, secret_key: bytes) -> int:
 
     except Exception as e:
         raise ValueError(f"Неверный hash: {str(e)}")
-
-
-def generate_six_digit_code() -> str:
-    """
-    Базовая генерация 6-значного кода
-    """
-    return ''.join([str(random.randint(0, 9)) for _ in range(6)])
-
-
-def generate_invite_link(reg_hash: str) -> str:
-    return f"https://t.me/nash_market_bot?start=reg_{reg_hash}"

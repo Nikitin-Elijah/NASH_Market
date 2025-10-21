@@ -10,7 +10,7 @@ const HomeButton = () => {
     };
 
     return (
-        <div className="d-flex justify-content-between shadow-sm">
+        <div className="d-flex justify-content-between">
              <button className="btn btn-primary m-3 bi-arrow-left" onClick={handleBack}>  
             </button>
         </div>

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HomeButton from "../buttons/HomeButton";
 import { AuthContext } from '../ApiMethods';
+// import avatar from '../../../../public/blue-avatar.png';
 
 const MyProfilePage = () => {
     const { getUser } = useContext(AuthContext);
@@ -16,7 +17,7 @@ const MyProfilePage = () => {
         try {
             const res = await getUser();
             setUsername(res.username);
-            setPhotoUrl(res.photo_url);
+            setPhotoUrl(res.photo_url || '/blue-avatar.png');
             setEmail(res.email);
         } catch (err) {
             alert('Ошибка получения данных пользователя');

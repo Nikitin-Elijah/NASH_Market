@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import List
 
 from sqlalchemy import String, DateTime, BigInteger
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
-from src.config import database_configuration
-from src.database.base_model import BaseModel
+from config import database_configuration
+from database.base_model import BaseModel
 
 
 class UserModel(BaseModel):
@@ -21,13 +20,3 @@ class UserModel(BaseModel):
     is_active: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-
-    products: Mapped[List['ProductModel']] = relationship(
-        'ProductModel',
-        back_populates='seller',
-        uselist=True,
-        cascade="all, delete-orphan"
-    )
-
-    def __str__(self):
-        return f'{self.id=}, {self.username=}'

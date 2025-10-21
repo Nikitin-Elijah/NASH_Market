@@ -15,11 +15,68 @@ services:
       - ENDPOINT_URL=${ENDPOINT_URL}
       - BUCKET_NAME=${BUCKET_NAME}
       - STORAGE_URL=${STORAGE_URL}
+      - VERIFICATION_SECRET_KEY=${VERIFICATION_SECRET_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
     depends_on:
+      - db
+      - redis
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  celery_worker:
+    build: ./backend
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE=${DATABASE}
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    command: celery -A src.main.celery_app worker --loglevel=info -P gevent
+    depends_on:
+      - redis
+      - backend
       - db
     volumes:
       - ./backend:/app
     restart: unless-stopped
+
+  celery_beat:
+    build: ./backend
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    command: celery -A src.main.celery_app beat --loglevel=info
+    depends_on:
+      - redis
+      - backend
+      - db
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  bot:
+    build: ./bot
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE=${DATABASE}
+      - DB_PORT=5432
+      - VERIFICATION_SECRET_KEY=${VERIFICATION_SECRET_KEY}
+    depends_on:
+      - db
+    volumes:
+      - ./bot:/app
+    restart: unless-stopped
+
 
   frontend:
     build: ./frontend
@@ -43,5 +100,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  redis:
+    image: redis:7
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  redis_data:

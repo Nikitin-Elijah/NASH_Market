@@ -5,9 +5,10 @@ import MyProducts from "./components/pages/MyProductsPage";
 import AddProduct from "./components/pages/AddProductPage";
 import Home from "./components/pages/Home";
 import MyProfilePage from "./components/pages/MyProfilePage";
-import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './components/ApiMethods';
 import EditProductPage from "./components/pages/EditProductPage";
+import RegisterPage from "./components/pages/RegisterPage";
+import VerifyPage from "./components/pages/VerifyPage";
 
 
 
@@ -23,6 +24,8 @@ function App() {
             <Route path="/my-products" element={<MyProducts />} />
             <Route path="/profile" element={<MyProfilePage />} />
             <Route path="/edit-product/:id" element={<EditProductPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/verify" element={<VerifyPage />} />
           </Routes>
         </BrowserRouter>
     </AuthProvider>
