@@ -114,7 +114,7 @@ async def update_product(
     if db_product.seller_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='User cannot update product')
 
-    update_product = ProductCreate(name=name, description=description, price=price)
+    update_product_data = ProductCreate(name=name, description=description, price=price)
 
     if image:
         file_content = await image.read()
@@ -125,12 +125,6 @@ async def update_product(
             original_filename=original_filename
         )
         image_url = generate_storage_url(filename=filename)
-
-        await s3_storage.upload_file(
-            file_path=None,
-            file_content=file_content,
-            file_name=filename
-        )
 
         await s3_storage.upload_file(
             file_path=None,
@@ -149,7 +143,7 @@ async def update_product(
         update(ProductModel).where(
             ProductModel.id == db_product.id
         ).values(
-            **update_product.model_dump()
+            **update_product_data.model_dump()
         )
     )
     await session.commit()

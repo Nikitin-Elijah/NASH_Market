@@ -13,7 +13,7 @@ class UserCleanupService:
     def __init__(self, database: DatabaseConfig):
         self.database = database
 
-    async def delete_unverified_users(self, hours_threshold: int = 24) -> int:
+    async def delete_unverified_users(self, hours_threshold: int = 1) -> int:
         """
         Удаляет пользователей, которые не подтвердили регистрацию в течение N часов
         """

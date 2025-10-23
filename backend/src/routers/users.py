@@ -3,10 +3,15 @@ from typing import List
 import jwt
 from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, Form
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.auth import verify_password, create_access_token, create_refresh_token, get_current_user
 from src.config import SECRET_KEY, ALGORITHM, s3_storage
+from src.database.db_depends import get_async_db
 from src.models.users import UserModel
+from src.schemas.purchases import PurchaseSchema
 from src.schemas.users import UserSchema
 from src.utils import generate_avatar_filename, generate_storage_url
 
@@ -98,3 +103,42 @@ async def upload_photo(
         await s3_storage.delete_file(object_name=old_photo_filename)
 
     return db_user
+
+
+@router.delete('/{user_id}')
+async def delete_user(user_id: int):
+    db_user = await UserModel.get(user_id)
+
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+
+    await db_user.delete()
+    return {'detail': 'User successful deleted'}
+
+
+@router.get('/offers', response_model=List[PurchaseSchema])
+async def get_user_offers(
+        current_user: UserModel = Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_db)
+):
+    user = await session.scalar(
+        select(UserModel)
+        .options(selectinload(UserModel.offers))
+        .where(UserModel.id == current_user.id)
+    )
+
+    return user.offers
+
+
+@router.get('/purchases', response_model=List[PurchaseSchema])
+async def get_user_purchases(
+        current_user: UserModel = Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_db)
+):
+    user = await session.scalar(
+        select(UserModel)
+        .options(selectinload(UserModel.purchases))
+        .where(UserModel.id == current_user.id)
+    )
+
+    return user.purchases

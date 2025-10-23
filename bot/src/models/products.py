@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import String, DECIMAL, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.config import database_configuration
-from src.database.base_model import BaseModel
+from config import database_configuration
+from database.base_model import BaseModel
 
 
 class ProductModel(BaseModel):

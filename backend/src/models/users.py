@@ -26,7 +26,21 @@ class UserModel(BaseModel):
         'ProductModel',
         back_populates='seller',
         uselist=True,
-        cascade="all, delete-orphan"
+        cascade='all, delete-orphan'
+    )
+    offers: Mapped[List['PurchaseModel']] = relationship(
+        'PurchaseModel',
+        back_populates='seller',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='PurchaseModel.seller_id'
+    )
+    purchases: Mapped[List['PurchaseModel']] = relationship(
+        'PurchaseModel',
+        back_populates='buyer',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='PurchaseModel.buyer_id'
     )
 
     def __str__(self):

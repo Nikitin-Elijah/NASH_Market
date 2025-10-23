@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import REDIS_URL, database_configuration
-from src.routers import users, products, verification_code
+from src.routers import users, products, verification_code, purchases
 from src.user_cleanup_service.user_cleanup_service import UserCleanupService
 
 app = FastAPI(description='NASH market API', version='0.1.0')
@@ -23,6 +23,7 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(products.router)
 app.include_router(verification_code.router)
+app.include_router(purchases.rabbit_router)
 
 
 celery_app = Celery(
@@ -35,7 +36,7 @@ loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
 @celery_app.task(name='cleanup_unverified_users_task')
-def cleanup_unverified_users_task(hours_threshold: int = 24):
+def cleanup_unverified_users_task(hours_threshold: int = 1):
     """
     Фоновая задача для очистки неактивных пользователей
     """
@@ -57,7 +58,7 @@ def cleanup_unverified_users_task(hours_threshold: int = 24):
 celery_app.conf.beat_schedule = {
     'cleanup-unverified-users-every-6-hours': {
         'task': 'cleanup_unverified_users_task',
-        'schedule': 21600,
+        'schedule': 3600,
         'args': [24]
     },
 }

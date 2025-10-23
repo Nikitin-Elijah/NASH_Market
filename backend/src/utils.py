@@ -15,7 +15,7 @@ def generate_avatar_filename(user_id: int, original_filename: str) -> str:
 
 
 def generate_product_image_filename(user_id: int, product_id: int, original_filename: str) -> str:
-    extension = original_filename.split('.')[-1]
+    extension = 'png'
     filename = f"product_{product_id}_{user_id}_{uuid.uuid4().hex}.{extension}"
     return filename
 
@@ -61,7 +61,7 @@ def generate_six_digit_code() -> str:
     """
     Базовая генерация 6-значного кода
     """
-    return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    return ''.join([str(random.randint(1, 9)) for _ in range(6)])
 
 
 def generate_invite_link(reg_hash: str) -> str:
