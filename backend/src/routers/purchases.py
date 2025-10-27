@@ -71,7 +71,7 @@ async def accept_purchase(purchase_id: int, current_user: UserModel = Depends(ge
 
 
 @rabbit_router.patch('/reject/{purchase_id}', response_model=PurchaseSchema)
-async def accept_purchase(purchase_id: int, current_user: UserModel = Depends(get_current_user)):
+async def reject_purchase(purchase_id: int, current_user: UserModel = Depends(get_current_user)):
     db_purchase = await PurchaseModel.get(purchase_id)
 
     if not db_purchase:

@@ -31,9 +31,9 @@ class BaseModel(Base, Generic[T]):
                 instance: T | None = await session.scalar(select(cls).where(cls.id == pk))
                 return instance
 
+
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.get(pk)
+                print(e)
 
 
     @classmethod
@@ -44,9 +44,9 @@ class BaseModel(Base, Generic[T]):
                 result = await session.scalars(select(cls).filter_by(**kwargs))
                 return result.all()
 
+
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.filter(*args, **kwargs)
+                print(e)
 
     @classmethod
     async def all(cls: Type[T]) -> List[T]:
@@ -56,9 +56,9 @@ class BaseModel(Base, Generic[T]):
                 result = await session.scalars(select(cls))
                 return result.all()
 
+
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.all()
+                print(e)
 
     async def delete(self) -> None:
         """del current instance from db"""
@@ -67,9 +67,9 @@ class BaseModel(Base, Generic[T]):
                 await session.delete(self)
                 await session.commit()
 
+
             except OperationalError as e:
-                time.sleep(3)
-                await self.delete()
+                print(e)
 
     @classmethod
     async def create(cls: Type[T], **kwargs) -> T:
@@ -82,9 +82,9 @@ class BaseModel(Base, Generic[T]):
                 await session.refresh(instance)
                 return instance
 
+
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.create(**kwargs)
+                print(e)
 
     async def save(self) -> T:
         """save current instance to the db"""
@@ -101,6 +101,6 @@ class BaseModel(Base, Generic[T]):
                 # await session.refresh(self)
                 return self
 
+
             except OperationalError as e:
-                time.sleep(3)
-                return await self.save()
+                print(e)

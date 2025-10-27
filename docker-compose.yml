@@ -45,11 +45,14 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_DB=0
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
     command: celery -A src.main.celery_app worker --loglevel=info -P gevent
     depends_on:
       - redis
       - backend
       - db
+      - elasticsearch
     volumes:
       - ./backend:/app
     restart: unless-stopped
@@ -68,6 +71,15 @@ services:
     volumes:
       - ./backend:/app
     restart: unless-stopped
+
+  elasticsearch:
+    image: "elasticsearch:9.1.1"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - "9200:9200"
 
   bot:
     build: ./bot

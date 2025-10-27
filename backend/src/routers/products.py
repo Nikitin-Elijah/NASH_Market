@@ -1,15 +1,16 @@
 from typing import List
 
 from fastapi import APIRouter, status, Form, UploadFile, Depends, HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import select, update, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.auth import get_current_user
-from src.config import s3_storage
+from src.config import s3_storage, PRODUCTS_SEARCHER, ES
 from src.database.db_depends import get_async_db
 from src.models import UserModel, ProductModel
 from src.schemas.products import ProductSchema, ProductCreate
+from src.search_service.es_update_products_service import ESUpdateProductsService
 from src.utils import generate_product_image_filename, generate_storage_url
 
 router = APIRouter(prefix='/products', tags=['products'])
@@ -17,21 +18,15 @@ router = APIRouter(prefix='/products', tags=['products'])
 
 @router.post('/', response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
 async def create_product(
-        name: str = Form(...),
-        description: str | None = Form(...),
-        price: float = Form(...),
+        request_schema: ProductCreate = Depends(ProductCreate),
         image: UploadFile | None = None,
         current_user: UserModel = Depends(get_current_user)
 ):
     """
     Создает Товар
     """
-    ProductCreate(name=name, description=description, price=price)
-
     db_product = await ProductModel.create(
-        name=name,
-        description=description,
-        price=price,
+        **request_schema.model_dump(),
         image_url='default_url',
         rating=5,
         seller_id=current_user.id
@@ -171,3 +166,30 @@ async def delete_product(
 
     await db_product.delete()
     return {'message': 'Product removed successfully'}
+
+
+@router.get('/search/', response_model=List[ProductSchema])
+async def search_product_by_query(
+    query: str,
+    limit: int = 20,
+    offset: int = 0,
+    session: AsyncSession = Depends(get_async_db)
+):
+    products = PRODUCTS_SEARCHER.search_cards(query=query, count=limit, offset=offset)
+    ids = list(map(int, products.card_ids))
+
+    if not ids:
+        return []
+
+    order = case({id_: index for index, id_ in enumerate(ids)}, value=ProductModel.id)
+    stmt = select(ProductModel).where(ProductModel.id.in_(ids)).order_by(order)
+    db_products = (await session.scalars(stmt)).all()
+
+    return db_products
+
+
+@router.get('/update-es/')
+async def update_es():
+    updater = ESUpdateProductsService(es=ES)
+    await updater.update_products()
+    return {'message': 'OK'}
