@@ -13,7 +13,7 @@ class Indexer:
         index_name = "cards-" + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         self.create_empty_cards_index(index_name)
 
-        all_products = await self.products.all()
+        all_products = await self.products.filter(is_active=True)
         for product in all_products:
             self.put_card_into_index(product, index_name)
 
@@ -25,8 +25,7 @@ class Indexer:
                 "properties": {
                     "name": {"type": "text", "analyzer": "russian"},
                     "description": {"type": "text", "analyzer": "russian"},
-                    "price": {"type": "scaled_float", "scaling_factor": 100},
-                    "rating": {"type": "scaled_float", "scaling_factor": 10},
+                    "price": {"type": "scaled_float", "scaling_factor": 100}
                 }
             }
         }
@@ -36,8 +35,7 @@ class Indexer:
         doc = {
             "name": product.name,
             "description": product.description,
-            "price": product.price,
-            "rating": product.rating,
+            "price": product.price
         }
         self.elasticsearch_client.index(index=index_name, id=product.id, body=doc)
 

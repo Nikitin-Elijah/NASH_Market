@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter, status, Depends, HTTPException
 from faststream.rabbit.fastapi import RabbitRouter
 

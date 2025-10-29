@@ -10,7 +10,9 @@ from sqlalchemy.orm import selectinload
 from src.auth import verify_password, create_access_token, create_refresh_token, get_current_user
 from src.config import SECRET_KEY, ALGORITHM, s3_storage
 from src.database.db_depends import get_async_db
+from src.models import ProductModel, UserFavoriteModel
 from src.models.users import UserModel
+from src.schemas.products import ProductSchema
 from src.schemas.purchases import PurchaseSchema
 from src.schemas.users import UserSchema
 from src.utils import generate_avatar_filename, generate_storage_url
@@ -142,3 +144,52 @@ async def get_user_purchases(
     )
 
     return user.purchases
+
+
+@router.post('/favorites/{product_id}', status_code=status.HTTP_201_CREATED)
+async def add_favorite(product_id: int, current_user: UserModel = Depends(get_current_user)):
+    db_product = await ProductModel.get(product_id)
+
+    if not db_product or not db_product.is_active:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Product not found')
+
+    db_user_favorites = await UserFavoriteModel.filter(user_id=current_user.id, product_id=product_id)
+
+    if db_user_favorites:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail='The user has already added the product to their favorites'
+        )
+
+    favorite = await UserFavoriteModel.create(
+        user_id=current_user.id,
+        product_id=product_id
+    )
+
+    return {"status": "added", "favorite_id": favorite.id}
+
+
+@router.get('/favorites', response_model=List[ProductSchema])
+async def get_favorite_products(
+        current_user: UserModel = Depends(get_current_user),
+        session: AsyncSession = Depends(get_async_db)
+):
+    stmt = (select(ProductModel)
+            .join(UserFavoriteModel, ProductModel.id == UserFavoriteModel.product_id)
+            .where(UserFavoriteModel.user_id == current_user.id)
+            .options(selectinload(ProductModel.images)))
+
+    result = (await session.scalars(stmt)).all()
+    return result
+
+
+@router.delete('/favorites/{product_id}')
+async def delete_favorite(product_id: int, current_user: UserModel = Depends(get_current_user)):
+    db_user_favorites = await UserFavoriteModel.filter(product_id=product_id, user_id=current_user.id)
+
+    if not db_user_favorites:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Favorite not found')
+
+    db_user_favorite = db_user_favorites[0]
+    await db_user_favorite.delete()
+
+    return {"status": "removed"}

@@ -24,9 +24,9 @@ class PurchaseModel(BaseModel):
     product: Mapped['ProductModel'] = relationship('ProductModel', back_populates='purchases')
     seller: Mapped['UserModel'] = relationship('UserModel', back_populates='offers', foreign_keys=[seller_id])
     buyer: Mapped['UserModel'] = relationship('UserModel', back_populates='purchases', foreign_keys=[buyer_id])
+    review: Mapped['ReviewModel'] = relationship('ReviewModel', back_populates='purchase')
 
     def __repr__(self):
-        # Удобная строка — формат похож на словарь Python, но без лишних кавычек
         attrs = {
             'id': self.id,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S.%f') if self.created_at else None,

@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from config import database_configuration, RABBITMQ_URL
-from models import PurchaseModel
+from models import PurchaseModel, ProductModel
 from utils import bot, escape_markdown_v2
 
 
@@ -19,12 +19,15 @@ async def purchase_notice(purchase_id: str):
             .options(
                 selectinload(PurchaseModel.seller),
                 selectinload(PurchaseModel.buyer),
-                selectinload(PurchaseModel.product)
+                selectinload(PurchaseModel.product).options(
+                    selectinload(ProductModel.images)
+                )
             )
         )
         seller = db_purchase.seller
         buyer = db_purchase.buyer
         product = db_purchase.product
+        main_image = [image for image in product.images if image.is_main == True][0]
 
         text = ''
         text += escape_markdown_v2('👋 Привет! У вас новое предложение 💸\n')
@@ -37,7 +40,7 @@ async def purchase_notice(purchase_id: str):
         try:
             await bot.send_photo(
                 chat_id=seller.tg_user_id,
-                photo=product.image_url,
+                photo=main_image.url,
                 caption=text,
                 parse_mode='markdownV2'
             )
@@ -59,12 +62,15 @@ async def accept_purchase(purchase_id: str):
             .options(
                 selectinload(PurchaseModel.seller),
                 selectinload(PurchaseModel.buyer),
-                selectinload(PurchaseModel.product)
+                selectinload(PurchaseModel.product).options(
+                    selectinload(ProductModel.images)
+                )
             )
         )
         seller = db_purchase.seller
         buyer = db_purchase.buyer
         product = db_purchase.product
+        main_image = [image for image in product.images if image.is_main == True][0]
 
         text = ''
         text += escape_markdown_v2('👋 Привет! Твое предложение одобрили 💸\n')
@@ -76,7 +82,7 @@ async def accept_purchase(purchase_id: str):
         try:
             await bot.send_photo(
                 chat_id=buyer.tg_user_id,
-                photo=product.image_url,
+                photo=main_image.url,
                 caption=text,
                 parse_mode='markdownV2'
             )
@@ -98,12 +104,15 @@ async def reject_purchase(purchase_id: str):
             .options(
                 selectinload(PurchaseModel.seller),
                 selectinload(PurchaseModel.buyer),
-                selectinload(PurchaseModel.product)
+                selectinload(PurchaseModel.product).options(
+                    selectinload(ProductModel.images)
+                )
             )
         )
         seller = db_purchase.seller
         buyer = db_purchase.buyer
         product = db_purchase.product
+        main_image = [image for image in product.images if image.is_main == True][0]
 
         text = ''
         text += escape_markdown_v2('👋 Привет! Твое предложение отклонили 💸\n')
@@ -115,7 +124,7 @@ async def reject_purchase(purchase_id: str):
         try:
             await bot.send_photo(
                 chat_id=buyer.tg_user_id,
-                photo=product.image_url,
+                photo=main_image.url,
                 caption=text,
                 parse_mode='markdownV2'
             )

@@ -1,4 +1,3 @@
-import time
 from typing import List, TypeVar, Generic, Type
 from typing import Optional
 
@@ -31,7 +30,6 @@ class BaseModel(Base, Generic[T]):
                 instance: T | None = await session.scalar(select(cls).where(cls.id == pk))
                 return instance
 
-
             except OperationalError as e:
                 print(e)
 
@@ -44,7 +42,6 @@ class BaseModel(Base, Generic[T]):
                 result = await session.scalars(select(cls).filter_by(**kwargs))
                 return result.all()
 
-
             except OperationalError as e:
                 print(e)
 
@@ -56,7 +53,6 @@ class BaseModel(Base, Generic[T]):
                 result = await session.scalars(select(cls))
                 return result.all()
 
-
             except OperationalError as e:
                 print(e)
 
@@ -66,7 +62,6 @@ class BaseModel(Base, Generic[T]):
             try:
                 await session.delete(self)
                 await session.commit()
-
 
             except OperationalError as e:
                 print(e)
@@ -81,7 +76,6 @@ class BaseModel(Base, Generic[T]):
                 await session.commit()
                 await session.refresh(instance)
                 return instance
-
 
             except OperationalError as e:
                 print(e)
@@ -98,9 +92,7 @@ class BaseModel(Base, Generic[T]):
                     ).values(**{c.name: getattr(self, c.name) for c in self.__table__.columns})
                 )
                 await session.commit()
-                # await session.refresh(self)
                 return self
-
 
             except OperationalError as e:
                 print(e)

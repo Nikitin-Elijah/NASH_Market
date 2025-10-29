@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import REDIS_URL, database_configuration, ES
-from src.routers import users, products, verification_code, purchases
+from src.routers import users, products, verification_code, purchases, reviews
 from src.search_service.es_update_products_service import ESUpdateProductsService
 from src.user_cleanup_service.user_cleanup_service import UserCleanupService
 
@@ -25,6 +25,7 @@ app.include_router(users.router)
 app.include_router(products.router)
 app.include_router(verification_code.router)
 app.include_router(purchases.rabbit_router)
+app.include_router(reviews.router)
 
 
 celery_app = Celery(
