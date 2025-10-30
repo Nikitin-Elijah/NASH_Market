@@ -21,12 +21,47 @@ class UserModel(BaseModel):
     is_active: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    rating: Mapped[float | None] = mapped_column(default=None)
 
     products: Mapped[List['ProductModel']] = relationship(
         'ProductModel',
         back_populates='seller',
         uselist=True,
-        cascade="all, delete-orphan"
+        cascade='all, delete-orphan'
+    )
+    offers: Mapped[List['PurchaseModel']] = relationship(
+        'PurchaseModel',
+        back_populates='seller',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='PurchaseModel.seller_id'
+    )
+    purchases: Mapped[List['PurchaseModel']] = relationship(
+        'PurchaseModel',
+        back_populates='buyer',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='PurchaseModel.buyer_id'
+    )
+    authored_reviews: Mapped[List['ReviewModel']] = relationship(
+        'ReviewModel',
+        back_populates='author',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='ReviewModel.author_id'
+    )
+    received_reviews: Mapped[List['ReviewModel']] = relationship(
+        'ReviewModel',
+        back_populates='recipient',
+        uselist=True,
+        cascade='all, delete-orphan',
+        foreign_keys='ReviewModel.recipient_id'
+    )
+    favorites: Mapped[List['UserFavoriteModel']] = relationship(
+        'UserFavoriteModel',
+        back_populates='user',
+        uselist=True,
+        cascade='all, delete-orphan'
     )
 
     def __str__(self):

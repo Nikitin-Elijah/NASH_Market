@@ -1,5 +1,6 @@
 import asyncio
 
+from handlers.purchase_handlers import broker
 from utils import bot, dp
 from handlers import routers
 
@@ -12,10 +13,11 @@ async def main() -> None:
         dp.include_router(router)
 
     try:
-        bot_info = await bot.get_me()
-        print(f'Bot @{bot_info.username} has started.')
-
-        await dp.start_polling(bot)
+        async with broker:
+            await broker.start()
+            bot_info = await bot.get_me()
+            print(f'Bot @{bot_info.username} has started.')
+            await dp.start_polling(bot)
 
     except Exception as e:
         print(e)
