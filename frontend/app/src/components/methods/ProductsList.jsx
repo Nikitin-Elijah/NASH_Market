@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import '../style.css'
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+
 const PRODUCTS_URL = "http://127.0.0.1:8000/products/";
 
 export default function ProductList() {
@@ -37,35 +37,39 @@ export default function ProductList() {
   if (error || products.length === 0) return <p>Не удалось загрузить товары</p>;
 
   return (
-  <div className="row row-cols-2 row-cols-sm-3 row-cols-md-5 row-cols-lg-6 g-3 m-2">
-    {products.map((product) => (
-      <div className="col" key={product.id}>
-        <div
-          className="item position-relative card"
-          style={{
-            transition: "transform 0.3s ease",
-            cursor: "pointer",
-            height: "85%"
-          }}
-          onClick={() => handleCardClick(product.id)} 
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        >
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="card-img-top"
-            style={{ height: "150px", objectFit: "cover" }}
-          />
-
-          <div className="d-flex flex-column align-items-start text-break p-2">
-            <span className="text fs-6">{product.name}</span>
-            <p className="text fs-6">{product.price} ₽</p>
+    <div className="container py-4">
+      <div className="product-grid">
+        {products.map((p) => (
+          <div key={p.id} className="product-wrapper"
+          onClick={() => handleCardClick(p.id)}>
+            <div
+              className="card product-card"
+              style={{
+                borderRadius: "12px",
+                overflow: "hidden",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <div style={{height: "200px", overflow: "hidden"}}>
+                <img
+                  src={p.image_url}
+                  alt={p.name}
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    objectFit: "cover",
+                    transition: "transform 0.4s ease",
+                  }}
+                />
+              </div>
+              <div className="d-flex flex-column justify-content-center">
+                <span className="m-2 mb-0">{p.name}</span>
+                <p className="fw-bold m-2 mt-0">{p.price}</p>
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
       </div>
-    ))}
-  </div>
-);
-
+    </div>
+  );
 }

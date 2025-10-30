@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton.jsx";
 import { AuthContext } from '../methods/ApiMethods.jsx';
+import SimpleHeader from "../layouts/SimpleHeader.jsx";
 
 
 
@@ -24,9 +24,9 @@ function RegisterPage() {
 
     return (
         <>
-        <HomeButton className="position-absolute top-0 start-0 m-3" />
+        <SimpleHeader />
         <div className="text-center m-4">
-            <h1 className="fs-1">Регистрация</h1>
+            <h1>Регистрация</h1>
         </div>
 
         <div className="d-flex flex-column align-items-center justify-content-center">
@@ -76,7 +76,7 @@ function RegisterPage() {
                     <label className="form-label">Запомни меня</label>
                 </div>
 
-                <button className="btn btn-primary w-100 mb-2" type="submit">
+                <button className="w-100 mb-2" type="submit">
                     Зарегистрироваться
                 </button>
             </form>

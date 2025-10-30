@@ -16,7 +16,7 @@ const MyProductButton = () => {
   return (
     <button
       onClick={handleMyProducts}
-      className="btn btn-outline-primary rounded-pill"
+      className=""
     >
       Мои товары
     </button>

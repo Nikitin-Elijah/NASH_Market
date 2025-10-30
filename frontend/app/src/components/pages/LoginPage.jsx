@@ -28,7 +28,7 @@ function LoginPage() {
             <div className="d-flex align-items-center gap-3">
             <h1
                 onClick={() => navigate("/")}
-                className="h5 m-0 text-primary fw-semibold"
+                className="h5 m-0 fw-semibold"
                 style={{ cursor: "pointer" }}
             >
                 NASH Market
@@ -75,12 +75,12 @@ function LoginPage() {
                     <label className="form-label">Запомни меня</label>
                 </div>
 
-                <button className="btn btn-primary w-100 mb-2" type="submit">
+                <button className="w-100 mb-2" type="submit">
                     Войти
                 </button>
                 <div className="d-flex justify-content-between mb-2">
                     <span>Впервые здесь?</span>
-                    <a href="/register">Зарегистрироваться</a>
+                    <a className='text-decoration-none'href="/register">Зарегистрироваться</a>
                 </div>
             </form>
         </div>

@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
-import { AuthContext } from "../methods/ApiMethods.jsx";
-import Header from "./Header";
+import React, {useEffect, useState, useContext} from "react";
+import {AuthContext} from "../methods/ApiMethods.jsx";
+import Header from "../layouts/Header.jsx";
 
 const ProductPage = () => {
-  const { get } = useContext(AuthContext);
-  const [product, setProduct] = useState(null);
+  const {get} = useContext(AuthContext);
+  const [p, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,7 +44,7 @@ const ProductPage = () => {
     );
   }
 
-  if (!product) {
+  if (!p) {
     return (
       <div>
         <Header />
@@ -58,32 +58,36 @@ const ProductPage = () => {
       <Header />
       <div className="container d-flex justify-content-center align-items-center mt-5">
         <div
-          className="item position-relative card mx-auto"
+          className="card product-card border-0 shadow-sm"
           style={{
-            width: "300px",
-            transition: "transform 0.3s ease",
-            cursor: "pointer",
+            borderRadius: "12px",
+            overflow: "hidden",
+            transition: "transform 0.3s ease, box-shadow 0.3s ease",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
         >
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="card-img-top"
-            style={{ height: "200px", objectFit: "cover" }}
-          />
-
-          <div className="card-body d-flex flex-column align-items-start text-break">
-            <h5 className="card-title">{product.name}</h5>
-            {product.description && (
-                <p className="card-text text-muted">{product.description}</p>
-            )}
-            <p className="card-text">{product.price} ₽</p>
-            <div className="w-100 d-flex justify-content-center mt-2">
-                <button className="btn btn-primary">Откликнуться</button>
-            </div>
+          <div
+            className="card-buttons position-absolute top-0 end-0 m-2 d-flex gap-1"
+            onClick={(e) => e.stopPropagation()}
+          ></div>
+          <div style={{height: "200px", overflow: "hidden"}}>
+            <img
+              src={p.image_url}
+              alt={p.name}
+              style={{
+                height: "100%",
+                width: "100%",
+                objectFit: "cover",
+                transition: "transform 0.4s ease",
+              }}
+            />
           </div>
+          <div className="d-flex flex-column justify-content-center">
+            <span className="m-2 mb-0">{p.name}</span>
+            <p className="fw-bold m-2 mt-0">{p.price} ₽</p>
+          </div>
+        <div className="w-100 d-flex justify-content-center mt-2">
+          <button className="">Откликнуться</button>
+        </div>
         </div>
       </div>
     </div>

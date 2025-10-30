@@ -15,7 +15,6 @@ const EditProduct = () => {
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
 
-    // Fetch existing product data
     useEffect(() => {
         const fetchProduct = async () => {
             try {

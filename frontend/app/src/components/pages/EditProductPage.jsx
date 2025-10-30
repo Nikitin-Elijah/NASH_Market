@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../methods/ApiMethods.jsx';
-import Header from "./Header.jsx";
+import Header from '../layouts/Header.jsx';
 
 const EditProductPage = () => {
     const { edit } = useContext(AuthContext);
@@ -99,7 +99,7 @@ const EditProductPage = () => {
                 <div className="preview">
                     <img id="previewImg" src={(e) => setImage(e.target.files[0])} alt="Превью фото" />
                 </div>
-                <button className="btn btn-primary m-4">Добавить товар</button>
+                <button className="m-4">Редактировать товар</button>
             </form>
         </div>
     )

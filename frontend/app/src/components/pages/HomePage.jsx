@@ -1,6 +1,6 @@
 import React from 'react'
 import ProductList from '../methods/ProductsList'
-import Header from './Header';
+import Header from '../layouts/Header';
 
 
 const Home = () => {

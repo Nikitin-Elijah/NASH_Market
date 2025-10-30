@@ -1,0 +1,159 @@
+/* Пахан короче, всем тут заведует */
+:root {
+  /* Главные цвета */
+  --color-primary: #000;
+  --color-primary-hover: #2c2c2c;
+  --color-secondary: #212121;
+  --color-secondary-hover: #ced4da;
+  --color-danger: #ef4444;
+  --color-danger-hover: #fa5555;
+
+  /* Цвета фона */
+  --color-bg: #e8e8e8;
+
+  /* Цвета текста */
+  --color-text: #0f172a;
+  --color-text-light: #e8e8e8;
+  --color-text-muted: #6d6b6b;
+
+  /* Цвета элементов*/
+  --color-border: #0f172a;
+  --color-border-light: #ccc;
+  --box-shadow: 0 4px 10px rgba(15, 23, 42, 0.3);
+  --blur-bg: rgba(0, 0, 0, 0.5);
+
+  /* Шрифты */
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+
+  /* Размеры шрифта (мобильная база) */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1.1rem; /* 16px */
+  --font-size-lg: 1.25rem; /* 20px */
+  --font-size-xl: 1.5rem; /* 24px */
+  --font-size-xxl: 2rem; /* 32px */
+
+  /* Отступы */
+  --spacing-sm: 10px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+
+  /* Радиусы и тени */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 48px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+
+  /* Контейнеры */
+  --container-sm: 100%;
+  --container-md: 90%;
+  --container-lg: 90%;
+  --container-xl: 90%;
+
+  /* Максимальные ширины */
+  --max-sm: 100%;
+  --max-md: 600px;
+  --max-lg: 960px;
+  --max-xl: 1200px;
+
+  /* Переходы */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Buttons */
+  --min-width-btn: 160px;
+  --max-height-btn: 50px;
+}
+
+/* Это БАЗА */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  /* outline: 2px solid green !important; */
+}
+
+body {
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Для скрытных пидарасов */
+.hidden {
+  display: none !important;
+}
+
+/* — Планшеты — */
+@media (min-width: 640px) {
+  :root {
+    /* Шрифты */
+    --font-size-sm: 0.9rem;
+    --font-size-base: 1.1rem;
+    --font-size-lg: 1.4rem;
+    --font-size-xl: 1.8rem;
+    --font-size-xxl: 2.2rem;
+
+    /* Отступы */
+    --spacing-sm: 10px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Контейнер */
+    --container-sm: 540px;
+    --container-md: 720px;
+  }
+}
+
+/* — Ноутбуки — */
+@media (min-width: 1024px) {
+  :root {
+    --font-size-sm: 1rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 2rem;
+    --font-size-xxl: 2.5rem;
+
+    --spacing-md: 24px;
+    --spacing-lg: 40px;
+    --spacing-xl: 60px;
+
+    --container-lg: 960px;
+    --container-xl: 1280px;
+  }
+}
+
+/* — Десктопы — */
+@media (min-width: 1280px) {
+  :root {
+    --font-size-sm: 1.05rem;
+    --font-size-base: 1.1rem;
+    --font-size-lg: 1.75rem;
+    --font-size-xl: 2.25rem;
+    --font-size-xxl: 3rem;
+
+    --spacing-md: 28px;
+    --spacing-lg: 48px;
+    --spacing-xl: 72px;
+
+    --container-xl: 1140px;
+  }
+}
+
+@media (min-width: 1536px) {
+  :root {
+    --container-xl: 1320px;
+  }
+}
