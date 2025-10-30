@@ -1,4 +1,3 @@
-import time
 from typing import List, TypeVar, Generic, Type
 from typing import Optional
 
@@ -32,8 +31,7 @@ class BaseModel(Base, Generic[T]):
                 return instance
 
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.get(pk)
+                print(e)
 
 
     @classmethod
@@ -45,8 +43,7 @@ class BaseModel(Base, Generic[T]):
                 return result.all()
 
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.filter(*args, **kwargs)
+                print(e)
 
     @classmethod
     async def all(cls: Type[T]) -> List[T]:
@@ -57,8 +54,7 @@ class BaseModel(Base, Generic[T]):
                 return result.all()
 
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.all()
+                print(e)
 
     async def delete(self) -> None:
         """del current instance from db"""
@@ -68,8 +64,7 @@ class BaseModel(Base, Generic[T]):
                 await session.commit()
 
             except OperationalError as e:
-                time.sleep(3)
-                await self.delete()
+                print(e)
 
     @classmethod
     async def create(cls: Type[T], **kwargs) -> T:
@@ -83,8 +78,7 @@ class BaseModel(Base, Generic[T]):
                 return instance
 
             except OperationalError as e:
-                time.sleep(3)
-                return await cls.create(**kwargs)
+                print(e)
 
     async def save(self) -> T:
         """save current instance to the db"""
@@ -98,9 +92,7 @@ class BaseModel(Base, Generic[T]):
                     ).values(**{c.name: getattr(self, c.name) for c in self.__table__.columns})
                 )
                 await session.commit()
-                # await session.refresh(self)
                 return self
 
             except OperationalError as e:
-                time.sleep(3)
-                return await self.save()
+                print(e)

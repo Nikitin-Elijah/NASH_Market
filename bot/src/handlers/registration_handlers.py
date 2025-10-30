@@ -4,7 +4,8 @@ from aiogram.types import Message
 
 from config import VERIFICATION_SECRET_KEY
 from models import VerificationCode, UserModel
-from utils import decode_record_id
+from utils import decode_record_id, escape_markdown_v2
+
 
 reg_router = Router()
 
@@ -29,18 +30,19 @@ async def start(message: Message):
 
                 if db_user:
                     await message.answer(
-                        f"Добро пожаловать в телеграмм бот нашенского рынка!\n"
-                        f"Этот телеграмм аккаунт уже зарегистрирован"
+                        f'Добро пожаловать в телеграмм бот нашенского рынка!\n'
+                        f'Этот телеграмм аккаунт уже зарегистрирован'
                     )
 
                 else:
                     db_verification_code.tg_user_id = message.from_user.id
                     db_verification_code.tg_username = message.from_user.username
                     await db_verification_code.save()
-                    await message.answer(
-                        f"Добро пожаловать в телеграмм бот нашенского рынка!\n"
-                        f"Код для подтверждения регистрации: {code}"
+                    text = escape_markdown_v2(
+                        f'Добро пожаловать в телеграмм бот нашенского рынка!\nКод для подтверждения регистрации:'
                     )
+                    text += f'```{code}```'
+                    await message.answer(text=text, parse_mode='markdownV2')
 
     else:
         await message.answer(

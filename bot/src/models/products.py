@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import String, DECIMAL, ForeignKey, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.config import database_configuration
-from src.database.base_model import BaseModel
+from config import database_configuration
+from database.base_model import BaseModel
 
 
 class ProductModel(BaseModel):
@@ -27,13 +27,7 @@ class ProductModel(BaseModel):
     )
     purchases: Mapped[List['PurchaseModel']] = relationship(
         'PurchaseModel',
-        back_populates='product',
         uselist=True,
-        cascade='all, delete-orphan'
-    )
-    favorited_by: Mapped[List['UserFavoriteModel']] = relationship(
-        'UserFavoriteModel',
         back_populates='product',
-        uselist=True,
         cascade='all, delete-orphan'
     )

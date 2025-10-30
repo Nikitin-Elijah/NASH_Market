@@ -50,6 +50,9 @@ async def create_user(user: UserCreate):
 async def verify_code(verify_code: VerifyCodeSchema):
     db_user = await UserModel.get(verify_code.user_id)
 
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User does not exist')
+
     if db_user.is_active:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User is already active')
 
@@ -66,13 +69,11 @@ async def verify_code(verify_code: VerifyCodeSchema):
     normalized_db_code = str(db_verification_code.code).strip()
     normalized_input_code = str(verify_code.code).strip()
 
-    print(f'DEBUG: DB code: {normalized_db_code}, Input code: {normalized_input_code}')
-
     if normalized_db_code != normalized_input_code:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid verification code')
 
     if not db_verification_code.tg_user_id:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='The server did not detect tg id')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='The server did not detect tg id')
 
     db_verification_code.activate = True
     await db_verification_code.save()
