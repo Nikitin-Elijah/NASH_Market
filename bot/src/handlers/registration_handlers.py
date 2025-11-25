@@ -2,49 +2,56 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from config import VERIFICATION_SECRET_KEY
-from models import VerificationCode, UserModel
-from utils import decode_record_id, escape_markdown_v2
+from src.api_client.api_client import APIClient
+from src.config import VERIFICATION_SECRET_KEY
+from src.utils import escape_markdown_v2
+from src.utils import decode_record_id
 
 
 reg_router = Router()
 
 
-@reg_router.message(Command('start'))
+@reg_router.message(Command("start"))
 async def start(message: Message):
+    api_client = APIClient()
     args = message.text.split()
 
     if len(args) > 1:
         param = args[1]
 
-        if param.startswith('reg_'):
+        if param.startswith("reg_"):
             reg_hash = param[4:]
-            record_id = decode_record_id(hash_string=reg_hash, secret_key=VERIFICATION_SECRET_KEY.encode())
-            db_verification_code = await VerificationCode.get(record_id)
+            record_id = decode_record_id(
+                hash_string=reg_hash, secret_key=VERIFICATION_SECRET_KEY.encode()
+            )
+            verification_code = await api_client.get_verification_code(
+                user_id=record_id
+            )
 
-            if not db_verification_code.activate:
-                code = db_verification_code.code
+            if not verification_code["activate"]:
+                code = verification_code["code"]
 
-                db_users = await UserModel.filter(tg_user_id=message.from_user.id)
-                db_user = db_users[0] if db_users else None
+                user = await api_client.get_user_by_tg_user_id(
+                    tg_user_id=message.from_user.id
+                )
 
-                if db_user:
+                if user:
                     await message.answer(
-                        f'Добро пожаловать в телеграмм бот нашенского рынка!\n'
-                        f'Этот телеграмм аккаунт уже зарегистрирован'
+                        f"Добро пожаловать в телеграмм бот нашенского рынка!\n"
+                        f"Этот телеграмм аккаунт уже зарегистрирован"
                     )
 
                 else:
-                    db_verification_code.tg_user_id = message.from_user.id
-                    db_verification_code.tg_username = message.from_user.username
-                    await db_verification_code.save()
-                    text = escape_markdown_v2(
-                        f'Добро пожаловать в телеграмм бот нашенского рынка!\nКод для подтверждения регистрации:'
+                    await api_client.update_verification_code(
+                        user_id=record_id,
+                        tg_user_id=message.from_user.id,
+                        tg_username=message.from_user.username,
                     )
-                    text += f'```{code}```'
-                    await message.answer(text=text, parse_mode='markdownV2')
+                    text = escape_markdown_v2(
+                        f"Добро пожаловать в телеграмм бот нашенского рынка!\nКод для подтверждения регистрации:"
+                    )
+                    text += f"```{code}```"
+                    await message.answer(text=text, parse_mode="markdownV2")
 
     else:
-        await message.answer(
-            f"Добро пожаловать в телеграмм бот нашенского рынка!\n"
-        )
+        await message.answer(f"Добро пожаловать в телеграмм бот нашенского рынка!\n")

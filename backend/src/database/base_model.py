@@ -1,4 +1,3 @@
-import time
 from typing import List, TypeVar, Generic, Type
 from typing import Optional
 
@@ -9,7 +8,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from src.database.database_config import DatabaseConfig
 
 
-T = TypeVar('T', bound='BaseModel')
+T = TypeVar("T", bound="BaseModel")
 
 
 class Base(DeclarativeBase):
@@ -18,9 +17,10 @@ class Base(DeclarativeBase):
 
 class BaseModel(Base, Generic[T]):
     """Base model for all database models that contains common methods"""
+
     __database__: DatabaseConfig = None
     __abstract__ = True
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id: Mapped[int] = mapped_column(primary_key=True)
 
     @classmethod
@@ -28,12 +28,13 @@ class BaseModel(Base, Generic[T]):
         """get instance by pk"""
         async with cls.__database__.async_session_maker() as session:
             try:
-                instance: T | None = await session.scalar(select(cls).where(cls.id == pk))
+                instance: T | None = await session.scalar(
+                    select(cls).where(cls.id == pk)
+                )
                 return instance
 
             except OperationalError as e:
                 print(e)
-
 
     @classmethod
     async def filter(cls: Type[T], *args, **kwargs) -> List[T]:
@@ -86,11 +87,14 @@ class BaseModel(Base, Generic[T]):
         async with self.__database__.async_session_maker() as session:
             try:
                 await session.execute(
-                    update(
-                        self.__class__
-                    ).where(
-                        self.__class__.id == self.id
-                    ).values(**{c.name: getattr(self, c.name) for c in self.__table__.columns})
+                    update(self.__class__)
+                    .where(self.__class__.id == self.id)
+                    .values(
+                        **{
+                            c.name: getattr(self, c.name)
+                            for c in self.__table__.columns
+                        }
+                    )
                 )
                 await session.commit()
                 return self

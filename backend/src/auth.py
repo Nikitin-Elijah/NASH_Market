@@ -11,7 +11,6 @@ from src.config import SECRET_KEY, ALGORITHM
 from src.database.db_depends import get_async_db
 
 
-# Создаём контекст для хеширования с использованием bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -43,7 +42,7 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def create_refresh_token(data: dict):          # New
+def create_refresh_token(data: dict):  # New
     """
     Создаёт рефреш-токен с длительным сроком действия.
     """
@@ -53,8 +52,9 @@ def create_refresh_token(data: dict):          # New
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme),
-                           db: AsyncSession = Depends(get_async_db)):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_async_db)
+):
     """
     Проверяет JWT и возвращает пользователя из базы.
     """
@@ -77,7 +77,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
     except jwt.PyJWTError:
         raise credentials_exception
     result = await db.scalars(
-        select(UserModel).where(UserModel.username == username, UserModel.is_active == True))
+        select(UserModel).where(
+            UserModel.username == username, UserModel.is_active == True
+        )
+    )
     user = result.first()
     if user is None:
         raise credentials_exception

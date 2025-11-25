@@ -25,5 +25,7 @@ class ESUpdateProductsService:
             logger.info(f"Создан индекс '{index_name}' и alias '{self.alias_name}'")
 
         except Exception as e:
-            logger.error(f"Ошибка при обновлении товаров в индексе ElasticSearch: {str(e)}")
+            logger.error(
+                f"Ошибка при обновлении товаров в индексе ElasticSearch: {str(e)}"
+            )
             raise

@@ -19,20 +19,22 @@ class UserCleanupService:
         Удаляет пользователей, которые не подтвердили регистрацию в течение N часов
         """
         try:
-            threshold_time = datetime.utcnow() - timedelta(hours=hours_threshold)
+            threshold_time = datetime.now() - timedelta(hours=hours_threshold)
 
             async with self.database.async_session_maker() as session:
                 unverified_users = await session.scalars(
                     select(UserModel).where(
                         UserModel.is_active == False,
-                        UserModel.created_at < threshold_time
+                        UserModel.created_at < threshold_time,
                     )
                 )
 
             deleted_count = 0
 
             for user in unverified_users:
-                logger.info(f"Удаление неактивного пользователя: {user.username} (создан: {user.created_at})")
+                logger.info(
+                    f"Удаление неактивного пользователя: {user.username} (создан: {user.created_at})"
+                )
                 await user.delete()
                 deleted_count += 1
 
