@@ -23,6 +23,7 @@ services:
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - BOT_API_KEY=${BOT_API_KEY}
     depends_on:
       db:
         condition: service_healthy
@@ -84,7 +85,7 @@ services:
   bot:
     build: ./bot
     environment:
-      - API_BASE_URL=backend
+      - API_BASE_URL=http://backend:8000
       - BOT_TOKEN=${BOT_TOKEN}
       - DB_HOST=db
       - DB_USER=${DB_USER}
@@ -96,6 +97,7 @@ services:
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - BOT_API_KEY=${BOT_API_KEY}
     depends_on:
       - db
       - rabbitmq
