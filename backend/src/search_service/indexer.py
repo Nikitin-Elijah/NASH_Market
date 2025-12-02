@@ -4,7 +4,12 @@ from src.models import ProductModel
 
 
 class Indexer:
-    def __init__(self, elasticsearch_client: Elasticsearch, products: ProductModel, cards_index_alias: str):
+    def __init__(
+        self,
+        elasticsearch_client: Elasticsearch,
+        products: ProductModel,
+        cards_index_alias: str,
+    ):
         self.elasticsearch_client = elasticsearch_client
         self.products = products
         self.cards_index_alias = cards_index_alias
@@ -25,7 +30,7 @@ class Indexer:
                 "properties": {
                     "name": {"type": "text", "analyzer": "russian"},
                     "description": {"type": "text", "analyzer": "russian"},
-                    "price": {"type": "scaled_float", "scaling_factor": 100}
+                    "price": {"type": "scaled_float", "scaling_factor": 100},
                 }
             }
         }
@@ -35,13 +40,15 @@ class Indexer:
         doc = {
             "name": product.name,
             "description": product.description,
-            "price": product.price
+            "price": product.price,
         }
         self.elasticsearch_client.index(index=index_name, id=product.id, body=doc)
 
     def switch_current_cards_index(self, new_index_name: str):
         try:
-            old_indices = self.elasticsearch_client.indices.get_alias(name=self.cards_index_alias)
+            old_indices = self.elasticsearch_client.indices.get_alias(
+                name=self.cards_index_alias
+            )
             remove_actions = [
                 {"remove": {"index": index_name, "alias": self.cards_index_alias}}
                 for index_name in old_indices
@@ -49,5 +56,7 @@ class Indexer:
         except NotFoundError:
             remove_actions = []
 
-        actions = remove_actions + [{"add": {"index": new_index_name, "alias": self.cards_index_alias}}]
+        actions = remove_actions + [
+            {"add": {"index": new_index_name, "alias": self.cards_index_alias}}
+        ]
         self.elasticsearch_client.indices.update_aliases(body={"actions": actions})

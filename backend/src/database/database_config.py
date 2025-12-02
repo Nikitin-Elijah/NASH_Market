@@ -3,12 +3,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 
 class DatabaseConfig:
     """
-        Database configuration
+    Database configuration
     """
+
     def __init__(self, database_url: str) -> None:
         self.database_url: str = database_url
         self.async_engine = create_async_engine(self.database_url, echo=True)
-        self.async_session_maker = async_sessionmaker(self.async_engine, expire_on_commit=False, class_=AsyncSession)
+        self.async_session_maker = async_sessionmaker(
+            self.async_engine, expire_on_commit=False, class_=AsyncSession
+        )
 
     async def get_async_session(self) -> AsyncSession:
         """

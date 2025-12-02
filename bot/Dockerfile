@@ -2,26 +2,24 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
+    gcc g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Poetry
+# Установка poetry
 RUN pip install poetry
 
-# Копирование файлов зависимостей
+
 COPY pyproject.toml poetry.lock* ./
 
-# Настройка Poetry
+
+# Настройка poetry
 RUN poetry config virtualenvs.create false
 
-# Установка зависимостей
+# Устанавливаем зависимости
 RUN poetry install --no-root
 
-# Копирование исходного кода
 COPY . .
 
-# Команда для запуска приложения
-CMD ["sh", "-c", "python src/main.py"]
+# Запуск бота
+CMD ["python", "-m", "src.main"]

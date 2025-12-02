@@ -6,7 +6,7 @@ from src.database.base_model import BaseModel
 
 
 class VerificationCode(BaseModel):
-    __tablename__ = 'verification_codes'
+    __tablename__ = "verification_codes"
     __database__ = database_configuration
 
     id: Mapped[int] = mapped_column(primary_key=True)

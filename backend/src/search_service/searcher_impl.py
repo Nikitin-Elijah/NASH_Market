@@ -8,14 +8,18 @@ class ElasticsearchSearcher(Searcher):
         self.elasticsearch_client = elasticsearch_client
         self.cards_index_name = cards_index_name
 
-    def search_cards(self, query: str = "", count: int = 20, offset: int = 0) -> CardSearchResult:
+    def search_cards(
+        self, query: str = "", count: int = 20, offset: int = 0
+    ) -> CardSearchResult:
         result = self.elasticsearch_client.search(
             index=self.cards_index_name,
             body={
                 "size": count,
                 "from": offset,
-                "query": self._make_text_query(query) if query else self._match_all_query
-            }
+                "query": (
+                    self._make_text_query(query) if query else self._match_all_query
+                ),
+            },
         )
 
         total_count = result["hits"]["total"]["value"]

@@ -6,11 +6,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import REDIS_URL, database_configuration, ES
-from src.routers import users, products, verification_code, purchases, reviews
+from src.api.routers import products, purchases, reviews, users, verification_code
 from src.search_service.es_update_products_service import ESUpdateProductsService
 from src.user_cleanup_service.user_cleanup_service import UserCleanupService
 
-app = FastAPI(description='NASH market API', version='0.1.0')
+app = FastAPI(description="NASH market API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,21 +25,18 @@ app.include_router(users.router)
 app.include_router(products.router)
 app.include_router(verification_code.router)
 app.include_router(purchases.rabbit_router)
+app.include_router(purchases.router)
 app.include_router(reviews.router)
 
 
-celery_app = Celery(
-    'user_cleanup',
-    broker=REDIS_URL,
-    backend=REDIS_URL
-)
+celery_app = Celery("user_cleanup", broker=REDIS_URL, backend=REDIS_URL)
 
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
 
 
-@celery_app.task(name='cleanup_unverified_users_task')
+@celery_app.task(name="cleanup_unverified_users_task")
 def cleanup_unverified_users_task(hours_threshold: int = 1):
     """
     Фоновая задача для очистки неактивных пользователей
@@ -55,11 +52,11 @@ def cleanup_unverified_users_task(hours_threshold: int = 1):
         "task": "cleanup_unverified_users",
         "deleted_count": deleted_count,
         "threshold_hours": hours_threshold,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
 
-@celery_app.task(name='update_products_es_task')
+@celery_app.task(name="update_products_es_task")
 def update_products_es_task():
     """
     Фоновая задача для обновления товаров в ElasticSearch
@@ -74,33 +71,33 @@ def update_products_es_task():
         return {
             "task": "update_products_es",
             "status": "success",
-            "timestamp": datetime.utcnow().isoformat(),
-            "message": "Индекс товаров успешно обновлен"
+            "timestamp": datetime.now().isoformat(),
+            "message": "Индекс товаров успешно обновлен",
         }
 
     except Exception as e:
         return {
             "task": "update_products_es",
             "status": "error",
-            "timestamp": datetime.utcnow().isoformat(),
-            "error": str(e)
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
         }
 
 
 celery_app.conf.beat_schedule = {
-    'cleanup-unverified-users-every-1-hour': {
-        'task': 'cleanup_unverified_users_task',
-        'schedule': 3600,
-        'args': [1]
+    "cleanup-unverified-users-every-1-hour": {
+        "task": "cleanup_unverified_users_task",
+        "schedule": 3600,
+        "args": [1],
     },
-    'update-products-es-daily': {
-        'task': 'update_products_es_task',
-        'schedule': 3600 * 24,
-        'args': []
-    }
+    "update-products-es-daily": {
+        "task": "update_products_es_task",
+        "schedule": 3600 * 24,
+        "args": [],
+    },
 }
 
 
-@app.get('/')
+@app.get("/")
 async def root() -> dict:
-    return {'message': 'NASH market API root'}
+    return {"message": "NASH market API root"}
