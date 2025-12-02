@@ -21,7 +21,9 @@ export default function ProductList() {
           throw new Error("Ошибка при загрузке");
         }
         const data = await response.json();
-        setProducts(data);
+        // API возвращает объект пагинации: { items, total_count, limit, next_page_offset }
+        const items = Array.isArray(data?.items) ? data.items : [];
+        setProducts(items);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -52,7 +54,7 @@ export default function ProductList() {
             >
               <div style={{height: "200px", overflow: "hidden"}}>
                 <img
-                  src={p.image_url}
+                  src={(p.images?.find?.((img) => img.is_main)?.url) || (p.images && p.images[0]?.url) || ""}
                   alt={p.name}
                   style={{
                     height: "100%",
