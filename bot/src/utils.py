@@ -7,7 +7,7 @@ from datetime import datetime
 
 from aiogram import Bot, Dispatcher
 
-from config import BOT_TOKEN
+from src.config import BOT_TOKEN
 
 
 bot = Bot(token=BOT_TOKEN)

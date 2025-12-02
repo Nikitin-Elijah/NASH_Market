@@ -84,6 +84,7 @@ services:
   bot:
     build: ./bot
     environment:
+      - API_BASE_URL=backend
       - BOT_TOKEN=${BOT_TOKEN}
       - DB_HOST=db
       - DB_USER=${DB_USER}
@@ -98,6 +99,7 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - backend
     volumes:
       - ./bot:/app
     restart: unless-stopped

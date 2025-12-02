@@ -1,8 +1,8 @@
 import asyncio
 
-from handlers.purchase_handlers import broker
-from utils import bot, dp
-from handlers import routers
+from src.handlers.purchase_handlers import broker
+from src.utils import bot, dp
+from src.handlers import routers
 
 
 async def main() -> None:
