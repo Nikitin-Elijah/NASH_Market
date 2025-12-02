@@ -1,9 +1,9 @@
-import { createContext, useState, useEffect } from "react";
+import {createContext, useState, useEffect} from "react";
 import api from "../../js/api";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
       params.append("password", password);
 
       const res = await api.post("/users/token", params, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
       });
 
       const token = res.data.access_token;
@@ -86,10 +86,10 @@ export const AuthProvider = ({ children }) => {
   const verify = async (user_id, code) => {
     try {
       const res = await api.post(
-        "/auth/verify-code",
-        { user_id, code },
+        "/reg/verify-code/",
+        {user_id, code},
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {"Content-Type": "application/json"},
         }
       );
 
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     params.append("image", image_url);
 
     const res = await api.post("/products", params, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {"Content-Type": "multipart/form-data"},
     });
     return res.data;
   };
@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
     params.append("image", image_url);
 
     const res = await api.put(`/products/${id}`, params, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {"Content-Type": "multipart/form-data"},
     });
     return res.data;
   };
@@ -138,14 +138,14 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, password, confirmPassword) => {
     const res = await api.post(
-      "/auth/register",
+      "/reg/register/",
       {
         username,
         password,
         confirm_password: confirmPassword,
       },
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
       }
     );
     return res.data;
@@ -155,7 +155,7 @@ export const AuthProvider = ({ children }) => {
     const params = new FormData();
     params.append("photo", file);
     const res = await api.put("/users/upload-photo", params, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {"Content-Type": "multipart/form-data"},
     });
     return res.data.photo_url;
   };
