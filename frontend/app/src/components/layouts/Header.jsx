@@ -16,11 +16,11 @@ export default function Header() {
   }, [user]);
 
   const handleLogin = () => navigate("/login");
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1410);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1200);
+      setIsMobile(window.innerWidth < 1410);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

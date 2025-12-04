@@ -20,7 +20,7 @@ export default function MailBoxPage() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const res = await api.get("/users/offers/");
+        const res = await api.get("/users/me/offers");
         const offersData = res.data || [];
 
         // Загружаем username и tg_username для всех уникальных buyer_id
@@ -29,7 +29,7 @@ export default function MailBoxPage() {
         ];
         const userPromises = uniqueBuyerIds.map(async (buyerId) => {
           try {
-            const userRes = await api.get(`/users/${buyerId}/`);
+            const userRes = await api.get(`/users/${buyerId}`);
             return {
               buyerId,
               username: userRes.data.username,
@@ -81,7 +81,7 @@ export default function MailBoxPage() {
     const fetchPurchases = async () => {
       if (activeTab === "purchases" && user) {
         try {
-          const res = await api.get("/users/purchases/");
+          const res = await api.get("/users/me/purchases");
           const purchasesData = res.data || [];
 
           // Загружаем username и tg_username для всех уникальных seller_id из покупок

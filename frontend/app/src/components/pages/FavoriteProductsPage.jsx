@@ -32,7 +32,7 @@ export default function FavoriteProductsPage() {
     try {
       if (isRemoved) {
         // Возвращаем в избранное
-        await api.post(`/users/favorites/${productId}`);
+        await api.post(`/users/me/favorites/${productId}`);
         setRemovedFromFavorites((prev) => {
           const newSet = new Set(prev);
           newSet.delete(productId);
@@ -40,7 +40,7 @@ export default function FavoriteProductsPage() {
         });
       } else {
         // Удаляем из избранного
-        await api.delete(`/users/favorites/${productId}/`);
+        await api.delete(`/users/me/favorites/${productId}`);
         setRemovedFromFavorites((prev) => new Set([...prev, productId]));
       }
     } catch (err) {

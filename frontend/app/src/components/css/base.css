@@ -100,7 +100,7 @@ html {
   :root {
     /* Шрифты */
     --font-size-sm: 0.9rem;
-    --font-size-base: 1.1rem;
+    --font-size-base: 0.9rem;
     --font-size-lg: 1.4rem;
     --font-size-xl: 1.8rem;
     --font-size-xxl: 2.2rem;

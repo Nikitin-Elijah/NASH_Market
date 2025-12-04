@@ -27,7 +27,7 @@ export function usePaginatedProducts(onLoadMore) {
 
     setIsLoadingMore(true);
     try {
-      const response = await api.get("/products/", {
+      const response = await api.get("/products", {
         params: {
           limit: 10,
           offset: nextPageOffset,

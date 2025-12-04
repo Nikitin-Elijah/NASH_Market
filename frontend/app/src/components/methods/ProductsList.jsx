@@ -50,7 +50,7 @@ export default function ProductList() {
     try {
       if (isFavorite) {
         // Удаляем из избранного
-        await api.delete(`/users/favorites/${productId}/`);
+        await api.delete(`/users/me/favorites/${productId}`);
         setFavoriteIds((prev) => {
           const newSet = new Set(prev);
           newSet.delete(productId);
@@ -58,7 +58,7 @@ export default function ProductList() {
         });
       } else {
         // Добавляем в избранное
-        await api.post(`/users/favorites/${productId}`);
+        await api.post(`/users/me/favorites/${productId}`);
         setFavoriteIds((prev) => new Set([...prev, productId]));
       }
     } catch (err) {
@@ -78,7 +78,7 @@ export default function ProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get("/products/", {
+        const response = await api.get("/products", {
           params: {
             limit: 10,
             offset: 0,

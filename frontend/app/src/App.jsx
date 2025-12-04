@@ -16,6 +16,7 @@ import Settings from "./components/pages/Settings.jsx";
 import SearchResultsPage from "./components/pages/SearchResultsPage.jsx";
 import FavoriteProductsPage from "./components/pages/FavoriteProductsPage.jsx";
 import MailBoxPage from "./components/pages/MailBoxPage.jsx";
+import UserPage from "./components/pages/UserPage.jsx";
 
 
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/user/:id" element={<UserPage />} />
             <Route element={<PrivateRoute />}>
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/my-products" element={<MyProducts />} />

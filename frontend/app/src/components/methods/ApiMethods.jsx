@@ -20,7 +20,7 @@ export const AuthProvider = ({children}) => {
         if (!token) return;
 
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        const res = await api.get("/users/me/");
+        const res = await api.get("/users/me");
         setUser(res.data);
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -37,7 +37,7 @@ export const AuthProvider = ({children}) => {
       const token = localStorage.getItem("token");
       if (!token) return null;
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const res = await api.get("/users/me/");
+      const res = await api.get("/users/me");
       setUser(res.data);
       return res.data;
     } catch (error) {
@@ -126,7 +126,7 @@ export const AuthProvider = ({children}) => {
       });
 
       const res = await api.post(
-        `/products/?${queryParams.toString()}`,
+        `/products?${queryParams.toString()}`,
         params,
         {
           headers: {
@@ -246,7 +246,7 @@ export const AuthProvider = ({children}) => {
     try {
       const params = new FormData();
       params.append("photo", file);
-      const res = await api.put("/users/upload-photo/", params, {
+      const res = await api.put("/users/upload-photo", params, {
         headers: {"Content-Type": "multipart/form-data"},
       });
       return res.data.photo_url;
@@ -258,7 +258,7 @@ export const AuthProvider = ({children}) => {
 
   const getFavorites = async () => {
     try {
-      const res = await api.get("/users/favorites/");
+      const res = await api.get("/users/me/favorites");
       return res.data;
     } catch (error) {
       console.error("Get favorites failed:", error);

@@ -18,6 +18,8 @@ const ProductPage = () => {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [seller, setSeller] = useState(null);
+  const [sellerLoading, setSellerLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -63,6 +65,37 @@ const ProductPage = () => {
 
     fetchProduct();
   }, [get, id]);
+
+  // Получаем информацию о продавце
+  useEffect(() => {
+    const fetchSeller = async () => {
+      if (!product) return;
+
+      // Определяем ID продавца
+      const sellerId =
+        product.seller_id ||
+        product.user_id ||
+        product.owner_id ||
+        product.author_id;
+
+      if (!sellerId) {
+        console.warn("Не удалось определить ID продавца");
+        return;
+      }
+
+      try {
+        setSellerLoading(true);
+        const res = await api.get(`/users/${sellerId}`);
+        setSeller(res.data);
+      } catch (err) {
+        console.error("Ошибка при загрузке информации о продавце:", err);
+      } finally {
+        setSellerLoading(false);
+      }
+    };
+
+    fetchSeller();
+  }, [product]);
 
   // Получаем главное изображение (либо выбранное пользователем, либо помеченное как главное, либо первое)
   const mainImage =
@@ -112,7 +145,7 @@ const ProductPage = () => {
 
     try {
       setIsSubmitting(true);
-      await api.post("/purchases/", {
+      await api.post("/purchases", {
         product_id: product.id,
         comment: comment || "",
       });
@@ -254,6 +287,81 @@ const ProductPage = () => {
 
             {/* Информация о товаре */}
             <div className="p-4">
+              {/* Профиль продавца */}
+              {seller && (
+                <div
+                  className="mb-4 p-3"
+                  onClick={() => {
+                    const sellerId =
+                      seller.id ||
+                      product.seller_id ||
+                      product.user_id ||
+                      product.owner_id ||
+                      product.author_id;
+                    if (sellerId) {
+                      // Если пользователь кликает на свой профиль, перенаправляем на /profile
+                      if (
+                        user &&
+                        (seller.id === user.id || sellerId === user.id)
+                      ) {
+                        navigate("/profile");
+                      } else {
+                        navigate(`/user/${sellerId}`);
+                      }
+                    }
+                  }}
+                  style={{
+                    backgroundColor: "#f8f9fa",
+                    borderRadius: "8px",
+                    border: "1px solid #e9ecef",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#e9ecef";
+                    e.currentTarget.style.borderColor = "#007bff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f8f9fa";
+                    e.currentTarget.style.borderColor = "#e9ecef";
+                  }}
+                >
+                  <div className="d-flex align-items-center gap-3">
+                    <img
+                      src={seller.photo_url || "/blue-avatar.png"}
+                      alt={seller.username || "Продавец"}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        border: "2px solid #dee2e6",
+                      }}
+                    />
+                    <div className="d-flex flex-column">
+                      <span
+                        style={{
+                          fontSize: "0.9rem",
+                          color: "#6c757d",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        Продавец
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: "500",
+                          color: "#212529",
+                        }}
+                      >
+                        {seller.username || "Неизвестно"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Название */}
               <h2
                 className="mb-3"
