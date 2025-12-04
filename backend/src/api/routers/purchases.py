@@ -4,7 +4,7 @@ from faststream.rabbit.fastapi import RabbitRouter
 from src.api.api_services.purchase_api_services import (
     AddPurchaseAPIService,
     UpdatePurchaseAPIService,
-    GetPurchaseAPIService,
+    GetPurchaseAPIService, CompletePurchaseAPIService,
 )
 from src.config import RABBITMQ_URL
 from src.api.schemas.purchases import PurchaseSchema, PurchaseCreate
@@ -21,7 +21,7 @@ async def get_purchase(
 
 
 @rabbit_router.post(
-    "/", response_model=PurchaseSchema, status_code=status.HTTP_201_CREATED
+    "", response_model=PurchaseSchema, status_code=status.HTTP_201_CREATED
 )
 async def create_purchase(
     purchase: PurchaseCreate,
@@ -56,3 +56,11 @@ async def reject_purchase(
     )
     await rabbit_router.broker.publish(f"{purchase.id}", queue="reject_purchases")
     return purchase
+
+
+@router.patch("/complete/{purchase_id}", response_model=PurchaseSchema)
+async def complete_purchase(
+    purchase_id: int,
+    complete_purchase_api_service: CompletePurchaseAPIService = Depends()
+):
+    return await complete_purchase_api_service.exec(purchase_id=purchase_id)
