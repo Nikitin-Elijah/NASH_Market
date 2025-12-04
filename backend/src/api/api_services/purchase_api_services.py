@@ -6,10 +6,11 @@ from src.exceptions.purchase_exceptions import (
     PurchaseRequestAlreadyExistsException,
     PurchaseNotFoundException,
     UserCannotAcceptPurchaseException,
-    PurchaseAlreadyProcessedException,
+    PurchaseAlreadyProcessedException, UserCannotCompletePurchaseException,
 )
 from src.models import PurchaseModel
-from src.services.purchase_services import AddPurchaseService, UpdatePurchaseService, GetPurchaseService
+from src.services.purchase_services import AddPurchaseService, UpdatePurchaseService, GetPurchaseService, \
+    CompletePurchaseService
 
 
 class GetPurchaseAPIService:
@@ -69,5 +70,24 @@ class UpdatePurchaseAPIService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
         except UserCannotAcceptPurchaseException as e:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+        except PurchaseAlreadyProcessedException as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+class CompletePurchaseAPIService:
+    """
+    API Сервис для подтверждения покупки
+    """
+
+    def __init__(self, complete_purchase_service: CompletePurchaseService = Depends()):
+        self.complete_purchase_service = complete_purchase_service
+
+    async def exec(self, purchase_id: int) -> PurchaseModel:
+        try:
+            return await self.complete_purchase_service.exec(purchase_id=purchase_id)
+        except PurchaseNotFoundException as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        except UserCannotCompletePurchaseException as e:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
         except PurchaseAlreadyProcessedException as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

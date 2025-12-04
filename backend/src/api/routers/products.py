@@ -26,7 +26,7 @@ from src.search_service.es_update_products_service import ESUpdateProductsServic
 router = APIRouter(prefix="/products", tags=["products"])
 
 
-@router.post("/", response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ProductSchema, status_code=status.HTTP_201_CREATED)
 async def create_product(
     request_schema: ProductCreate = Depends(),
     images: List[UploadFile] = File(None),
@@ -58,15 +58,19 @@ async def add_product_images(
     )
 
 
-@router.get("", response_model=List[ProductSchema])
+@router.get("/user/{user_id}", response_model=PaginatedResponse)
 async def get_user_products(
-    user_id: int = Query(),
+    user_id: int,
+    limit: int = Query(10, ge=1, le=100, description="Размер страницы"),
+    offset: int = Query(0, ge=0, description="Смещение следующей страницы"),
     get_user_products_api_service: GetUserProductsAPIService = Depends(),
 ):
     """
     Возвращает товары пользователя
     """
-    return await get_user_products_api_service.exec(user_id=user_id)
+    return await get_user_products_api_service.exec(
+        user_id=user_id, limit=limit, offset=offset
+    )
 
 
 @router.get("/{product_id}", response_model=ProductSchema)
@@ -80,19 +84,20 @@ async def get_product_per_id(
     return await get_product_api_service.exec(product_id=product_id)
 
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("", response_model=PaginatedResponse)
 async def paginated_products(
     limit: int = Query(10, ge=1, le=100, description="Размер страницы"),
     offset: int = Query(0, ge=0, description="Смещение следующей страницы"),
+    saved_total_count: int | None = Query(None),
     paginated_products_api_service: PaginatedProductsAPIService = Depends(),
 ):
     """
     Пагинация товаров
     """
-    return await paginated_products_api_service.exec(limit=limit, offset=offset)
+    return await paginated_products_api_service.exec(limit=limit, offset=offset, saved_total_count=saved_total_count)
 
 
-@router.get("/update-es/")
+@router.get("/update-es")
 async def update_es():
     updater = ESUpdateProductsService(es=ES)
     await updater.update_products()
@@ -152,7 +157,7 @@ async def delete_product_image(
     )
 
 
-@router.get("/search/", response_model=PaginatedResponse)
+@router.get("/search", response_model=PaginatedResponse)
 async def search_product_by_query(
     query: str,
     limit: int = Query(10, ge=1, le=100, description="Размер страницы"),

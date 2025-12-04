@@ -33,7 +33,7 @@ async def get_verification_code(
     return result
 
 
-@router.post("/register/", response_model=VerificationCodeSchema)
+@router.post("/register", response_model=VerificationCodeSchema)
 async def create_user(
     user: UserCreate,
     start_registration_api_service: StartRegistrationAPIService = Depends(),
@@ -49,7 +49,7 @@ async def create_user(
     )
 
 
-@router.post("/verify-code/")
+@router.post("/verify-code")
 async def verify_code(
     verify_code: VerifyCodeSchema,
     verify_code_api_service: VerifyCodeAPIService = Depends(),
