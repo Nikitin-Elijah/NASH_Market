@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import ProfileButton from "../buttons/ProfileButton.jsx";
 import AddButton from "../buttons/AddButton.jsx";
 import SettingsButton from "../buttons/SettingsButton.jsx";
+import FavoriteProductsButton from "../buttons/FavoriteProductsButton.jsx";
+import MailBoxButton from "../buttons/MailBoxButton.jsx";
 export default function Burger() {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -38,6 +40,12 @@ export default function Burger() {
       <ul className={`side-menu ${menuOpen ? "open" : ""}`}>
         <li className="menu-item">
           <ProfileButton />
+        </li>
+        <li className="menu-item">
+          <FavoriteProductsButton />
+        </li>
+        <li className="menu-item">
+          <MailBoxButton />
         </li>
         <li className="menu-item">
           <SettingsButton />

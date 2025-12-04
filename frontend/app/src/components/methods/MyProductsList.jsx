@@ -1,26 +1,19 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import {useNavigate} from "react-router-dom";
+import {AuthContext} from "./ApiMethods.jsx";
 import "bootstrap-icons/font/bootstrap-icons.css";
-const PRODUCTS_URL = "http://127.0.0.1:8000/products/my";
+import api from "../../js/api";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-
+  const {user} = useContext(AuthContext);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(PRODUCTS_URL, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Ошибка при загрузке");
-        }
-        const data = await response.json();
-        setProducts(data);
+        const response = await api.get(`/products?user_id=${user.id}`);
+        setProducts(response.data);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -34,26 +27,16 @@ export default function ProductList() {
   const navigate = useNavigate();
 
   const handleCardClick = (id) => {
-    navigate(`/product/${id}`);
+    navigate(`/edit-product/${id}`);
   };
   const handleAddProduct = () => {
     navigate("/add-product");
   };
-  const handleEdit = (id) => {
-    navigate(`/edit-product/${id}`);
-  };
+
   const handleDelete = async (id) => {
     if (window.confirm("Вы уверены, что хотите удалить этот товар?")) {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/products/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Ошибка при удалении товара");
-        }
+        await api.delete(`/products/${id}`);
         setProducts(products.filter((product) => product.id !== id));
       } catch (err) {
         console.error(err);
@@ -95,35 +78,20 @@ export default function ProductList() {
               <div
                 className="card-buttons position-absolute top-0 end-0 m-2 d-flex gap-1"
                 onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  className="btn btn-light p-1 opacity-75"
-                  style={{
-                    width: "28px",
-                    height: "28px",
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                    backdropFilter: "blur(4px)",
-                  }}
-                  onClick={() => handleEdit(p.id)}
-                >
-                  <i className="bi bi-pencil" style={{fontSize: "0.75rem"}}></i>
-                </button>
-                <button
-                  className="btn btn-light p-1 opacity-75"
-                  style={{
-                    width: "28px",
-                    height: "28px",
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                    backdropFilter: "blur(4px)",
-                  }}
-                  onClick={() => handleDelete(p.id)}
-                >
-                  <i className="bi bi-trash" style={{fontSize: "0.75rem"}}></i>
-                </button>
-              </div>
+              ></div>
               <div style={{height: "200px", overflow: "hidden"}}>
                 <img
-                  src={p.image_url}
+                  src={
+                    p.images?.find?.((img) => {
+                      const isMain =
+                        img.is_main === true ||
+                        img.is_main === "true" ||
+                        img.is_main === 1;
+                      return isMain;
+                    })?.url ||
+                    (p.images && p.images[0]?.url) ||
+                    ""
+                  }
                   alt={p.name}
                   style={{
                     height: "100%",

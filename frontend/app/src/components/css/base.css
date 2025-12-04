@@ -3,7 +3,7 @@
   /* Главные цвета */
   --color-primary: #000;
   --color-primary-hover: #2c2c2c;
-  --color-secondary: #212121;
+  --color-secondary: #9e9e9e;
   --color-secondary-hover: #ced4da;
   --color-danger: #ef4444;
   --color-danger-hover: #fa5555;
@@ -23,9 +23,9 @@
   --blur-bg: rgba(0, 0, 0, 0.5);
 
   /* Шрифты */
-  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  --font-main:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 
   /* Размеры шрифта (мобильная база) */
   --font-size-sm: 0.875rem; /* 14px */

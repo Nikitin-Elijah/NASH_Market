@@ -1,20 +1,58 @@
 import React, {useEffect, useState, useContext} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import {AuthContext} from "../methods/ApiMethods.jsx";
 import Header from "../layouts/Header.jsx";
+import api from "../../js/api";
 
 const ProductPage = () => {
-  const {get} = useContext(AuthContext);
-  const [p, setProduct] = useState(null);
+  const {id} = useParams();
+  const {get, user} = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [images, setImages] = useState([]);
+  const [selectedMainImage, setSelectedMainImage] = useState(null);
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [showOwnerMessage, setShowOwnerMessage] = useState(false);
+  const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const id = window.location.pathname.split("/").pop();
         const data = await get(id);
-        console.log("Загруженный товар:", data);
         setProduct(data);
+
+        // Нормализуем данные изображений
+        const normalizedImages = (data.images || []).map((img) => ({
+          ...img,
+          is_main:
+            img.is_main === true || img.is_main === "true" || img.is_main === 1,
+        }));
+
+        // Сортируем изображения: главное первым
+        const sortedImages = [...normalizedImages].sort((a, b) => {
+          if (a.is_main) return -1;
+          if (b.is_main) return 1;
+          return 0;
+        });
+
+        setImages(sortedImages);
+
+        // Устанавливаем главное изображение
+        const mainImg =
+          sortedImages.find((img) => img.is_main) || sortedImages[0];
+        setSelectedMainImage(mainImg);
       } catch (err) {
         console.error("Ошибка при загрузке товара:", err);
         setError("Не удалось загрузить товар");
@@ -24,31 +62,98 @@ const ProductPage = () => {
     };
 
     fetchProduct();
-  }, [get]);
+  }, [get, id]);
+
+  // Получаем главное изображение (либо выбранное пользователем, либо помеченное как главное, либо первое)
+  const mainImage =
+    selectedMainImage || images.find((img) => img.is_main) || images[0];
+
+  // Получаем остальные изображения для карусели (исключаем главное изображение)
+  const mainImageId = mainImage?.id;
+  const carouselImages = images.filter((img) => {
+    // Исключаем изображение, которое сейчас отображается как главное
+    return img.id !== mainImageId;
+  });
+
+  // Обработчик клика на изображение в карусели
+  const handleImageClick = (clickedImage) => {
+    setSelectedMainImage(clickedImage);
+  };
+
+  // Проверка, является ли текущий пользователь владельцем товара
+  const isOwner =
+    user &&
+    product &&
+    (product.user_id === user.id ||
+      product.owner_id === user.id ||
+      product.seller_id === user.id ||
+      product.author_id === user.id);
+
+  // Обработчик нажатия на кнопку "Хочу купить"
+  const handleBuyClick = () => {
+    // Проверка авторизации
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Если пользователь является владельцем товара, показываем/скрываем сообщение
+    if (isOwner) {
+      setShowOwnerMessage(!showOwnerMessage);
+      return;
+    }
+
+    setShowCommentInput(true);
+  };
+
+  // Обработчик отправки покупки
+  const handlePurchaseSubmit = async () => {
+    if (!product) return;
+
+    try {
+      setIsSubmitting(true);
+      await api.post("/purchases/", {
+        product_id: product.id,
+        comment: comment || "",
+      });
+
+      alert("Запрос на покупку отправлен!");
+      setShowCommentInput(false);
+      setComment("");
+    } catch (err) {
+      console.error("Ошибка при отправке запроса на покупку:", err);
+      alert(
+        `Не удалось отправить запрос: ${err.response?.data?.detail || err.message || "Неизвестная ошибка"}`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
       <div>
         <Header />
-        <p className="text-center mt-5">Загрузка...</p>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{minHeight: "50vh"}}
+        >
+          <div className="spinner" />
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !product) {
     return (
       <div>
         <Header />
-        <p className="text-center text-danger mt-5">{error}</p>
-      </div>
-    );
-  }
-
-  if (!p) {
-    return (
-      <div>
-        <Header />
-        <p className="text-center mt-5">Товар не найден</p>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{minHeight: "50vh"}}
+        >
+          <p className="text-danger">{error || "Товар не найден"}</p>
+        </div>
       </div>
     );
   }
@@ -56,38 +161,194 @@ const ProductPage = () => {
   return (
     <div>
       <Header />
-      <div className="container d-flex justify-content-center align-items-center mt-5">
-        <div
-          className="card product-card border-0 shadow-sm"
-          style={{
-            borderRadius: "12px",
-            overflow: "hidden",
-            transition: "transform 0.3s ease, box-shadow 0.3s ease",
-          }}
-        >
+      <div className="container py-4">
+        <div className="d-flex justify-content-center">
           <div
-            className="card-buttons position-absolute top-0 end-0 m-2 d-flex gap-1"
-            onClick={(e) => e.stopPropagation()}
-          ></div>
-          <div style={{height: "200px", overflow: "hidden"}}>
-            <img
-              src={p.image_url}
-              alt={p.name}
+            className="card shadow-sm"
+            style={{
+              maxWidth: "800px",
+              width: "100%",
+              borderRadius: "12px",
+              overflow: "hidden",
+            }}
+          >
+            {/* Главное изображение */}
+            <div
+              className="position-relative"
               style={{
-                height: "100%",
-                width: "100%",
-                objectFit: "cover",
-                transition: "transform 0.4s ease",
+                height: windowWidth < 768 ? "250px" : "400px",
+                overflow: "hidden",
               }}
-            />
+            >
+              {mainImage && (
+                <img
+                  src={mainImage.url}
+                  alt={product.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Карусель изображений */}
+            {carouselImages.length > 0 && (
+              <div
+                className="p-3"
+                style={{
+                  backgroundColor: "#f8f9fa",
+                }}
+              >
+                <div
+                  className="d-flex gap-2"
+                  style={{
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "#ccc transparent",
+                    WebkitOverflowScrolling: "touch",
+                    scrollBehavior: "smooth",
+                    msOverflowStyle: "-ms-autohiding-scrollbar",
+                  }}
+                >
+                  {carouselImages.map((img) => (
+                    <div
+                      key={img.id}
+                      className="position-relative"
+                      onClick={() => handleImageClick(img)}
+                      style={{
+                        minWidth: "100px",
+                        height: "100px",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        cursor: "pointer",
+                        border: "2px solid transparent",
+                        transition: "all 0.3s ease",
+                        flexShrink: 0,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "#007bff";
+                        e.currentTarget.style.transform = "scale(1.05)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "transparent";
+                        e.currentTarget.style.transform = "scale(1)";
+                      }}
+                    >
+                      <img
+                        src={img.url}
+                        alt={`${product.name} - изображение ${img.id}`}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Информация о товаре */}
+            <div className="p-4">
+              {/* Название */}
+              <h2
+                className="mb-3"
+                style={{fontSize: "1.5rem", fontWeight: "bold"}}
+              >
+                {product.name}
+              </h2>
+
+              {/* Описание */}
+              <p className="mb-3" style={{color: "#6c757d"}}>
+                {product.description || "Описание отсутствует"}
+              </p>
+
+              {/* Цена */}
+              <p
+                className="mb-4"
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "bold",
+                  color: "#28a745",
+                }}
+              >
+                {product.price} ₽
+              </p>
+
+              {/* Кнопка покупки и поле комментария */}
+              <div className="d-flex flex-column gap-2">
+                {!showCommentInput && !showOwnerMessage ? (
+                  <div className="w-100 d-flex justify-content-center">
+                    <button onClick={handleBuyClick}>Хочу купить</button>
+                  </div>
+                ) : showOwnerMessage ? (
+                  <>
+                    <div className="w-100 d-flex justify-content-center">
+                      <button onClick={handleBuyClick}>Хочу купить</button>
+                    </div>
+                    <div className="w-100 d-flex justify-content-center">
+                      <p
+                        style={{color: "#dc3545", fontSize: "1rem", margin: 0}}
+                      >
+                        Ты шо еблан?:)
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-100 d-flex justify-content-center">
+                      <input
+                        type="text"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Комментарий к покупке (необязательно)"
+                        className="form-control"
+                        style={{
+                          maxWidth: "400px",
+                          width: "100%",
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter" && !isSubmitting) {
+                            handlePurchaseSubmit();
+                          }
+                        }}
+                      />
+                    </div>
+                    <div
+                      className="w-100 d-flex justify-content-center gap-2"
+                      style={{
+                        maxWidth: "400px",
+                        width: "100%",
+                        margin: "0 auto",
+                      }}
+                    >
+                      <button
+                        className="button-reverse"
+                        onClick={() => {
+                          setShowCommentInput(false);
+                          setComment("");
+                        }}
+                        style={{flex: "1"}}
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        onClick={handlePurchaseSubmit}
+                        disabled={isSubmitting}
+                        style={{flex: "1"}}
+                      >
+                        {isSubmitting ? "Отправка..." : "Отправить"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="d-flex flex-column justify-content-center">
-            <span className="m-2 mb-0">{p.name}</span>
-            <p className="fw-bold m-2 mt-0">{p.price} ₽</p>
-          </div>
-        <div className="w-100 d-flex justify-content-center mt-2">
-          <button className="">Откликнуться</button>
-        </div>
         </div>
       </div>
     </div>

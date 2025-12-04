@@ -1,13 +1,68 @@
+/* HEADER */
+/*-----------------------------------------*/
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 2000;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Фиксируем Search, если он идет после header (мобильная версия) */
+header + .search-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1999;
+  background: var(--color-bg);
+  margin: 0 !important; /* Убираем margin от класса m-2 */
+  padding: var(--spacing-sm) var(--spacing-md); /* Добавляем padding вместо margin */
+  /* top будет установлен динамически через JavaScript в Header.jsx */
+}
+
+/* Отступ для контента, чтобы он не перекрывался header */
+/* Используем более простой селектор для совместимости */
+body {
+  padding-top: 0;
+}
+
+/* Отступ для страниц с header (современные браузеры) */
+@supports selector(:has(*)) {
+  div:has(> header) {
+    padding-top: 100px;
+  }
+
+  /* Если есть Search после header, увеличиваем отступ */
+  div:has(> header + .search-container) {
+    padding-top: 180px; /* header + search */
+  }
+}
+
+/* Fallback для старых браузеров - применяем отступ ко всем страницам */
+/* Можно будет уточнить, добавив класс на страницы с header */
+/*-----------------------------------------*/
+
 /* SEARCH */
 /*-----------------------------------------*/
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .search-input {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
+  padding-right: 45px;
   font-size: 16px;
   border: 2px solid var(--color-border-light);
   border-radius: 8px;
   outline: none;
-  transition: border-color var(--transition-base),
+  transition:
+    border-color var(--transition-base),
     box-shadow var(--transition-base);
 }
 
@@ -18,6 +73,30 @@
 
 .search-input:focus::placeholder {
   color: transparent;
+}
+
+.search-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  transition: color var(--transition-base);
+}
+
+.search-button:hover {
+  color: var(--color-primary);
+}
+
+.search-button i {
+  font-size: 18px;
 }
 /*-----------------------------------------*/
 
@@ -118,7 +197,9 @@
 .menu-item {
   opacity: 0;
   transform: translateX(40px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
 .side-menu.open .menu-item:nth-child(1) {
@@ -133,6 +214,16 @@
 }
 .side-menu.open .menu-item:nth-child(3) {
   transition-delay: 0.4s;
+  opacity: 1;
+  transform: translateX(0);
+}
+.side-menu.open .menu-item:nth-child(4) {
+  transition-delay: 0.55s;
+  opacity: 1;
+  transform: translateX(0);
+}
+.side-menu.open .menu-item:nth-child(5) {
+  transition-delay: 0.7s;
   opacity: 1;
   transform: translateX(0);
 }
@@ -173,6 +264,10 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.product-card {
+  position: relative;
+}
+
 .product-card .card-buttons {
   opacity: 0;
   transition: opacity 0.3s;
@@ -180,5 +275,228 @@
 
 .product-card:hover .card-buttons {
   opacity: 1;
+}
+
+.favorite-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.favorite-button:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.favorite-button i {
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.5);
+  transition: color 0.3s ease;
+}
+
+.favorite-button i.bi-heart-fill {
+  color: #dc3545;
+}
+
+.favorite-button:hover i.bi-heart {
+  color: rgba(220, 53, 69, 0.7);
+}
+/*-----------------------------------------*/
+
+/* OFFER CARD */
+/*-----------------------------------------*/
+.offer-card {
+  position: relative;
+  border: 2px solid var(--color-border-light);
+  border-radius: 8px;
+  background-color: #fff;
+  margin-bottom: calc(var(--spacing-sm) + 30px);
+  transition: border-color 0.3s ease;
+}
+
+.offer-card.accepted {
+  border-color: #28a745;
+}
+
+.offer-card.rejected {
+  border-color: #dc3545;
+}
+
+.offer-view-product-btn {
+  position: absolute;
+  top: -12px;
+  left: var(--spacing-md);
+  background-color: #fff;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: var(--transition-base);
+  z-index: 15;
+  color: var(--color-primary);
+  font-weight: normal;
+}
+
+.offer-view-product-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.offer-card-content {
+  padding: var(--spacing-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  transition: padding 0.3s ease;
+}
+
+.offer-user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.offer-user-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.offer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-light);
+  object-fit: cover;
+  background-color: var(--color-bg);
+  flex-shrink: 0;
+}
+
+.offer-username {
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.offer-comment {
+  color: var(--color-text);
+}
+
+.offer-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.offer-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 0;
+}
+
+.offer-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  background-color: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.offer-action-btn.accept:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.offer-action-btn.reject:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.offer-product-card {
+  border-top: 2px solid var(--color-border-light);
+  background-color: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 var(--spacing-md);
+  transition:
+    max-height 0.4s ease,
+    opacity 0.4s ease,
+    padding 0.4s ease;
+  pointer-events: none;
+}
+
+.offer-card.expanded .offer-product-card {
+  max-height: 500px;
+  opacity: 1;
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  pointer-events: auto;
+}
+
+.offer-product-content {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.offer-product-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--color-border-light);
+  flex-shrink: 0;
+}
+
+.offer-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.offer-product-name {
+  font-weight: bold;
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+}
+
+.offer-product-description {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.offer-product-price {
+  font-weight: bold;
+  font-size: var(--font-size-md);
+  color: var(--color-primary);
+  margin-top: auto;
 }
 /*-----------------------------------------*/

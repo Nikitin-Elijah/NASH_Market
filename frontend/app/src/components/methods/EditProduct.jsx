@@ -1,14 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import HomeButton from "../buttons/HomeButton";
-import { AuthContext } from './AuthContext';
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from './ApiMethods';
+import api from "../../js/api";
 
 const EditProduct = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get("id");
-    const PRODUCT_URL = `http://127.0.0.1:8000/products/${productId}`;
-    
-    const { edit } = useContext(AuthContext);
+    const { id: productId } = useParams();
+    const { edit, get } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -18,8 +15,7 @@ const EditProduct = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(PRODUCT_URL);
-                const data = await response.json();
+                const data = await get(productId);
                 setName(data.name);
                 setDescription(data.description);
                 setPrice(data.price);
@@ -28,36 +24,23 @@ const EditProduct = () => {
                 alert('Ошибка загрузки товара');
             }
         };
-        fetchProduct();
-    }, [PRODUCT_URL]);
+        if (productId) {
+            fetchProduct();
+        }
+    }, [productId, get]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('description', description);
-        formData.append('price', price);
-        if (image) {
-            formData.append('image', image);
-        }
-
         try {
-            const response = await fetch(PRODUCT_URL, {
-                method: 'PUT',
-                body: formData
-            });
-
-            if (response.ok) {
-                navigate('/');
-            } else {
-                throw new Error('Failed to update product');
-            }
+            await edit(productId, name, description, price, image);
+            navigate('/');
         } catch (err) {
             console.error('Error updating product:', err);
             alert('Ошибка изменения товара');
         }
     }
+
+    return null; // Этот компонент не используется, но оставлен для совместимости
 }
 
 export default EditProduct;

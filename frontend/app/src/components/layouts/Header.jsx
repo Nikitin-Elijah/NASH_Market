@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import React, {useContext, useEffect, useState, useRef} from "react";
+import {useNavigate, useLocation} from "react-router-dom";
 import {AuthContext} from "../methods/ApiMethods.jsx";
 import Search from "./Search.jsx";
 import Menu from "./Menu.jsx";
@@ -7,27 +7,60 @@ import Menu from "./Menu.jsx";
 export default function Header() {
   const {isTokenValid, logout, user} = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const headerRef = useRef(null);
+  const isMailboxPage = location.pathname === "/mailbox";
 
   useEffect(() => {
     if (!isTokenValid()) logout();
   }, [user]);
 
   const handleLogin = () => navigate("/login");
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < 1200);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Вычисляем высоту header и позиционируем Search
+  useEffect(() => {
+    if (isMobile && headerRef.current) {
+      const updateSearchPosition = () => {
+        const headerHeight = headerRef.current?.offsetHeight || 0;
+        const searchContainer = document.querySelector(
+          "header + .search-container"
+        );
+        if (searchContainer) {
+          const searchHeight = searchContainer.offsetHeight || 0;
+          searchContainer.style.top = `${headerHeight}px`;
+
+          // Обновляем отступ для контента
+          const pageContainer = searchContainer.parentElement;
+          if (pageContainer) {
+            pageContainer.style.paddingTop = `${headerHeight + searchHeight}px`;
+          }
+        }
+      };
+
+      // Небольшая задержка для правильного вычисления высоты после рендера
+      const timeoutId = setTimeout(updateSearchPosition, 0);
+      window.addEventListener("resize", updateSearchPosition);
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener("resize", updateSearchPosition);
+      };
+    }
+  }, [isMobile, user]);
   if (!user)
     return (
       <>
         {isMobile ? (
           <>
-            <header className="w-100 container-bg-light">
+            <header ref={headerRef} className="w-100 container-bg-light">
               <div className="d-flex justify-content-between align-items-center">
                 <h3
                   onClick={() => navigate("/")}
@@ -47,11 +80,11 @@ export default function Header() {
               </div>
               <div className="m-2"></div>
             </header>
-            <Search />
+            {!isMailboxPage && <Search />}
           </>
         ) : (
           <>
-            <header className="w-100 container-bg-light">
+            <header ref={headerRef} className="w-100 container-bg-light">
               <div className="d-flex justify-content-between align-items-center">
                 <div className="brand-section">
                   <h3
@@ -67,9 +100,11 @@ export default function Header() {
                     </span>
                   </h3>
                 </div>
-                <div className="flex-fill mx-3">
-                  <Search />
-                </div>
+                {!isMailboxPage && (
+                  <div className="flex-fill mx-3">
+                    <Search />
+                  </div>
+                )}
                 <div className="actions-section">
                   <button onClick={handleLogin} className="m-2">
                     Войти
@@ -87,7 +122,7 @@ export default function Header() {
     <>
       {isMobile ? (
         <>
-          <header className="w-100">
+          <header ref={headerRef} className="w-100">
             <div className="d-flex justify-content-between align-items-center">
               <h3
                 onClick={() => navigate("/")}
@@ -108,11 +143,11 @@ export default function Header() {
             <div></div>
             <div className="m-2"></div>
           </header>
-          <Search />
+          {!isMailboxPage && <Search />}
         </>
       ) : (
         <>
-          <header className="w-100">
+          <header ref={headerRef} className="w-100">
             <div className="d-flex justify-content-between align-items-center">
               <div className="brand-section">
                 <h3
@@ -129,9 +164,11 @@ export default function Header() {
                 </h3>
               </div>
 
-              <div className="flex-fill mx-3">
-                <Search />
-              </div>
+              {!isMailboxPage && (
+                <div className="flex-fill mx-3">
+                  <Search />
+                </div>
+              )}
 
               <div className="actions-section m-2">
                 <Menu />

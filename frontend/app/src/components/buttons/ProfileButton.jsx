@@ -3,9 +3,8 @@ import {useNavigate} from "react-router-dom";
 import {AuthContext} from "../methods/ApiMethods.jsx";
 
 const ProfileButton = () => {
-  const {user} = useContext(AuthContext);
+  const {user, isTokenValid} = useContext(AuthContext);
   const navigate = useNavigate();
-  const {isTokenValid} = useContext(AuthContext);
   const handleProfile = async () => {
     const valid = await isTokenValid();
     if (!valid) {
@@ -18,10 +17,10 @@ const ProfileButton = () => {
   return (
     <button className="d-flex align-items-center gap-2" onClick={handleProfile}>
       <img
-        alt="photo"
+        alt={user?.username || "Profile"}
         onClick={handleProfile}
         title={user?.username}
-        src={user?.photo_url || "/default_profile.png"}
+        src={user?.photo_url || "/blue-avatar.png"}
         className="d-flex align-items-center justify-content-center rounded-circle text-white border-0"
         style={{
           width: "25px",
