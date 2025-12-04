@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from fastapi import Depends, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,21 +18,15 @@ from src.services.image_services import (
 )
 
 
-@dataclass
-class ProductResponse:
-    product: ProductModel
-    images: list[ImageModel]
-
-
 class GetProductService:
     def __init__(self, session: AsyncSession = Depends(get_async_db)):
         self.session = session
 
     async def _get_product(self, product_id) -> ProductModel:
         product = await self.session.scalar(
-            select(ProductModel).where(
-                ProductModel.id == product_id, ProductModel.is_active == True
-            ).options(selectinload(ProductModel.images))
+            select(ProductModel)
+            .where(ProductModel.id == product_id, ProductModel.is_active == True)
+            .options(selectinload(ProductModel.images))
         )
         return product
 

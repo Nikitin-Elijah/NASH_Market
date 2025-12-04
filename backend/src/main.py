@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import REDIS_URL, database_configuration, ES
 from src.api.routers import products, purchases, reviews, users, verification_code
+from src.midlewares.logging_midleware import LoggingMiddleware
 from src.search_service.es_update_products_service import ESUpdateProductsService
 from src.user_cleanup_service.user_cleanup_service import UserCleanupService
 
@@ -19,7 +20,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.add_middleware(
+    LoggingMiddleware,
+    log_request_body=True,
+    log_response_body=True,
+    max_body_size=512,
+    include_traceback_in_logs=False,
+    hide_sensitive_headers=["authorization"]
+)
 
 app.include_router(users.router)
 app.include_router(products.router)

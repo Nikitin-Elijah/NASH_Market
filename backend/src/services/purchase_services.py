@@ -9,7 +9,7 @@ from src.exceptions.purchase_exceptions import (
     CannotBuyOwnProductException,
     PurchaseRequestAlreadyExistsException,
     UserCannotAcceptPurchaseException,
-    PurchaseAlreadyProcessedException,
+    PurchaseAlreadyProcessedException, UserCannotCompletePurchaseException,
 )
 from src.models import UserModel, PurchaseModel, ProductModel
 from src.services.product_services import GetProductService
@@ -94,7 +94,7 @@ class UpdatePurchaseService:
         self.session = session
         self.get_purchase_service = get_purchase_service
 
-    async def _update_purchase(self, purchase, p_status: str) -> PurchaseModel:
+    async def _update_purchase(self, purchase: PurchaseModel, p_status: str) -> PurchaseModel:
         if p_status == "accept":
             purchase.permission = True
         elif p_status == "reject":
@@ -115,3 +115,34 @@ class UpdatePurchaseService:
         purchase = await self.get_purchase_service.exec(purchase_id=purchase_id)
         self._validate(purchase=purchase)
         return await self._update_purchase(purchase=purchase, p_status=p_status)
+
+
+class CompletePurchaseService:
+    def __init__(
+        self,
+        session: AsyncSession = Depends(get_async_db),
+        user: UserModel = Depends(get_current_user),
+        get_purchase_service: GetPurchaseService = Depends()
+    ):
+        self.session = session
+        self.user = user
+        self.get_purchase_service = get_purchase_service
+
+    async def _complete_purchase(self, purchase) -> PurchaseModel:
+        purchase.successful = True
+        await self.session.commit()
+        await self.session.refresh(purchase)
+        return purchase
+
+    def _validate(self, purchase: PurchaseModel):
+        if purchase.seller_id != self.user.id:
+            raise UserCannotCompletePurchaseException("User can not process purchase")
+        if not purchase.permission:
+            raise UserCannotCompletePurchaseException("Purchase is not accepted")
+        if purchase.successful:
+            raise PurchaseAlreadyProcessedException("Purchase already complete")
+
+    async def exec(self, purchase_id: int) -> PurchaseModel:
+        purchase = await self.get_purchase_service.exec(purchase_id=purchase_id)
+        self._validate(purchase=purchase)
+        return await self._complete_purchase(purchase=purchase)

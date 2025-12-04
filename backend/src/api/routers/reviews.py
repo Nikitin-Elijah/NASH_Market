@@ -10,7 +10,7 @@ from src.api.schemas.reviews import ReviewSchema, ReviewCreate
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 
-@router.post("/", response_model=ReviewSchema, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ReviewSchema, status_code=status.HTTP_201_CREATED)
 async def create_review(
     review: ReviewCreate,
     add_review_api_service: AddReviewAPIService = Depends(),
